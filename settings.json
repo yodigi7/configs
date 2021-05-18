@@ -1,0 +1,60 @@
+{
+    "files.autoSave": "afterDelay",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "vim.easymotion": true,
+    "vim.handleKeys": {
+        "<C-k>": false,
+        "<C-o>": false,
+        "<C-b>": false,
+        "<C-,>": false,
+        "<C-n>": false,
+        "<C-w>": false,
+        "<C-0>": false
+    },
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [
+                "j",
+                "k"
+            ],
+            "after": [
+                "<esc>"
+            ]
+        }
+    ],
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    // "terminal.integrated.shell.windows": "C:\\WINDOWS\\System32\\cmd.exe",
+    "editor.copyWithSyntaxHighlighting": false,
+    "files.simpleDialog.enable": true,
+    "zenMode.hideLineNumbers": false,
+    "zenMode.hideTabs": false,
+    "zenMode.centerLayout": false,
+    "workbench.startupEditor": "newUntitledFile",
+    "debug.node.autoAttach": "on",
+    "yaml.schemas": {
+        "file:///c%3A/Users/anthony.buchholz/.vscode/extensions/atlassian.atlascode-2.8.6/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+    },
+    "workbench.editorAssociations": [
+        {
+            "viewType": "jupyter.notebook.ipynb",
+            "filenamePattern": "*.ipynb"
+        }
+    ],
+    "atlascode.bitbucket.enabled": false,
+    "atlascode.jira.enabled": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.printWidth": 130,
+    "prettier.enable": false,
+    "editor.formatOnSave": true,
+    "terminal.integrated.tabs.enabled": true,
+    "terminal.integrated.defaultProfile.windows": "C:\\Users\\anthony.buchholz\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1",
+    "files.exclude": {
+        "**/node_modules": true,
+        "package-lock.json": true
+    },
+    "window.title": "${activeEditorShort}${separator}${rootPath}",
+    "workbench.sideBar.location": "right",
+    "explorer.openEditors.visible": 0,
+    "editor.fontLigatures": true,
+    "editor.minimap.enabled": false
+}
