@@ -1,0 +1,19 @@
+" .vimrc
+
+syntax on " Syntax highlighting
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+set nobackup " We have vcs, we don't need backups.
+set nowritebackup " We have vcs, we don't need backups.
+
+set ignorecase " case insensitive search
+set smartcase " If there are uppercase letters, become case-sensitive.
+set incsearch " live incremental searching
+set showmatch " live match highlighting
+set hlsearch " highlight matches
+set relativenumber number
+
+inoremap jk <esc>

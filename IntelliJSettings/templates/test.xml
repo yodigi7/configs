@@ -1,0 +1,9 @@
+<templateSet group="test">
+  <template name="test" value="@Test&#10;public void $FUNCTION_NAME$() {&#10;    $END$&#10;}" description="For JUnit test template" toReformat="false" toShortenFQNames="true">
+    <variable name="FUNCTION_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+    </context>
+  </template>
+</templateSet>

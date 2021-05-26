@@ -1,0 +1,5 @@
+IdeaVIM
+Key Promoter X
+com.dmarcotte.handlebars
+com.ifengxue.plugin.jpa-support
+com.thoughtworks.gauge
