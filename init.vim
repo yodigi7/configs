@@ -1,15 +1,16 @@
 call plug#begin()
 
-Plug 'http://github.com/tpope/vim-surround' " Surrounding ysw)
-Plug 'https://github.com/preservim/nerdtree' " NerdTree
-Plug 'https://github.com/tpope/vim-commentary' " For Commenting gcc & gc
-Plug 'https://github.com/vim-airline/vim-airline' " Status bar
-Plug 'https://github.com/neoclide/coc.nvim'  " Auto Completion
-Plug 'https://github.com/ryanoasis/vim-devicons' " Developer Icons
-Plug 'https://github.com/tc50cal/vim-terminal' " Vim Terminal
-Plug 'https://github.com/preservim/tagbar' " Tagbar for code navigation
-Plug 'https://github.com/jiangmiao/auto-pairs' " Auto open and close pairs
-Plug 'https://github.com/tpope/vim-fugitive' " Auto open and close pairs
+Plug 'tpope/vim-surround' " Surrounding ysw)
+Plug 'tpope/vim-commentary' " For Commenting gcc & gc
+Plug 'vim-airline/vim-airline' " Status bar
+Plug 'neoclide/coc.nvim'  " Auto Completion
+Plug 'ryanoasis/vim-devicons' " Developer Icons
+Plug 'tc50cal/vim-terminal' " Vim Terminal
+Plug 'preservim/tagbar' " Tagbar for code navigation
+Plug 'jiangmiao/auto-pairs' " Auto open and close pairs
+Plug 'tpope/vim-fugitive' " Auto open and close pairs
+Plug 'liuchengxu/vim-which-key' " Show options for keybindings when in progress
+Plug 'oberblastmeister/neuron.nvim' " Note taking app
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': 'nvim-0.6' }
@@ -69,10 +70,6 @@ nmap yae ggyG
 nmap cae ggcG
 let mapleader = " "
 syntax on
-
-map <C-o> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable="+"
-let g:NERDTreeDirArrowCollapsible="~"
 
 function! TrimWhiteSpace()
   %s/\s*$//
@@ -147,3 +144,6 @@ map <leader>p <cmd>lua<space>require'telescope'.extensions.project.project{}<CR>
 " Fugitive
 map <C-p> :Git push<CR>
 map <C-k> :Git<CR>
+
+" Which key
+nnoremap <silent> <leader> <cmd>WhichKey '<Space>'<CR>
