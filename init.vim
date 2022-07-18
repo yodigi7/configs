@@ -145,5 +145,5 @@ nnoremap <leader>fb <cmd>Telescope buffers<CR>
 map <leader>p <cmd>lua<space>require'telescope'.extensions.project.project{}<CR>
 
 " Fugitive
-map <C-K> :Git push<CR>
-map <C-k> :Git commit<CR>
+map <C-S-k> :Git push<CR>
+map <C-k> :Git<CR>
