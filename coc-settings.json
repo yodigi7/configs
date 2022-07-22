@@ -1,4 +1,5 @@
 {
-    "diagnostic.virtualText": true,
-    "diagnostic.virtualTextCurrentLineOnly": false
+  "coc.preferences.formatOnSaveFiletypes": ["json", "javascript", "typescript"],
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false
 }
