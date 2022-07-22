@@ -1,43 +1,43 @@
-local nvim_set_option = vim.api.nvim_set_option
-
 vim.call('plug#begin')
 local Plug = vim.fn['plug#']
-Plug 'morhetz/gruvbox' -- Gruvbox color scheme
-Plug 'vim-airline/vim-airline' -- Status bar
-Plug 'ryanoasis/vim-devicons' -- Developer Icons
-Plug 'jiangmiao/auto-pairs' -- Auto open and close pairs
-Plug 'liuchengxu/vim-which-key' -- Show options for keybindings when in progress
-Plug 'lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
-Plug 'tpope/vim-surround' -- Surrounding ysw)
-Plug 'tpope/vim-commentary' -- For Commenting gcc & gc
-Plug 'tpope/vim-fugitive' -- Git integration
-Plug 'tpope/vim-projectionist' -- Jump from implementation to test files
-Plug 'tpope/vim-dispatch' -- Dispatch built/test/etc jobs to async terminal
+-- Use 'gx' to go to the github links
+-- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard
+-- https://github.com/unblevable/quick-scope
+Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
+Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
+Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
+Plug 'https://github.com/vim-airline/vim-airline' -- Status bar
+Plug 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
+Plug 'https://github.com/jiangmiao/auto-pairs' -- Auto open and close pairs
+Plug 'https://github.com/liuchengxu/vim-which-key' -- Show options for keybindings when in progress
+Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
+Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
+Plug 'https://github.com/tpope/vim-surround' -- Surrounding ysw)
+Plug 'https://github.com/tpope/vim-commentary' -- For Commenting gcc & gc
+Plug 'https://github.com/tpope/vim-fugitive' -- Git integration
+Plug 'https://github.com/tpope/vim-projectionist' -- Jump from implementation to test files
+Plug 'https://github.com/tpope/vim-dispatch' -- Dispatch built/test/etc jobs to async terminal
 
-Plug 'kana/vim-textobj-entire' -- Around everything
-Plug 'kana/vim-textobj-user' -- Requirement for around everything
+Plug 'https://github.com/kana/vim-textobj-entire' -- Around everything
+Plug 'https://github.com/kana/vim-textobj-user' -- Requirement for around everything
 
-Plug 'preservim/tagbar' -- Tagbar for code navigation
-Plug('ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-lockfile'}) -- Requirement for Tagbar
-
-Plug 'xolox/vim-misc' -- Requirement for vim notes
-Plug 'xolox/vim-notes' -- Note taking
+Plug 'https://github.com/preservim/tagbar' -- Tagbar for code navigation
+Plug('https://github.com/ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-lockfile'}) -- Requirement for Tagbar
 
 -- Telescope
-Plug 'nvim-lua/plenary.nvim'
-Plug('nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
-Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'https://github.com/nvim-lua/plenary.nvim'
+Plug('https://github.com/nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
+Plug 'https://github.com/nvim-telescope/telescope-project.nvim'
 
-Plug 'ThePrimeagen/harpoon' --Harpoon
+Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
 
 --CoC
-Plug 'neoclide/coc.nvim'  -- Auto Completion
-Plug('pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-lockfile && yarn build', branch = 'main' })
+Plug 'https://github.com/neoclide/coc.nvim'  -- Auto Completion
+Plug('https://github.com/pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-lockfile && yarn build', branch = 'main' })
 -- TODO
--- Plug('Lap1n/coc-projector', {['do'] = 'yarn install --frozen-lockfile && yarn build' })
-Plug('yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
+Plug('https://github.com/yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
 
-Plug 'voldikss/vim-floaterm' -- Floating terminal for reuse
+Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
 
 vim.call('plug#end')
 
@@ -92,25 +92,31 @@ set smartindent
 
 set list listchars=trail:~,extends:>
 
+set scrolloff=5
+
 colorscheme gruvbox
 
 ]])
 
 map("i", "jk", "<esc>")
 map("i", "kj", "<esc>")
-map("n", "<CR>", "o<esc>")
+-- map("n", "<CR>", "o<esc>")
 map("n", "Y", "y$")
 map("n", "<BS>", "hx")
+map("", "<C-h>", "<C-w>h")
+map("", "<C-j>", "<C-w>j")
+map("", "<C-k>", "<C-w>k")
+map("", "<C-l>", "<C-w>l")
 
 -- Vimrc settings
 map("n", "<leader>vv", ":split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vl", ":split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vo", ":edit $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vs", ":source $MYVIMRC<CR>", {silent=true})
+map("n", "<leader>vs", ":source $MYVIMRC<CR>:source ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 
--- Telescope project
-require'telescope'.load_extension("project")
+-- Telescope
 local telescope = require'telescope'
+telescope.load_extension("project")
 telescope.setup {
     pickers = {
         find_files = {
@@ -119,9 +125,12 @@ telescope.setup {
     }
 }
 map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", {silent=true})
-map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
 map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", {silent=true})
+map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
 map("", "<leader>p", "<cmd>lua<space>require'telescope'.extensions.project.project{}<CR>", {silent=true})
+map("n", "<leader>fgs", "<cmd>lua<space>require'telescope.builtin'.git_status{}<CR>", {silent=true})
+map("n", "<leader>fgc", "<cmd>lua<space>require'telescope.builtin'.git_commits{}<CR>", {silent=true})
+map("n", "<leader>fgb", "<cmd>lua<space>require'telescope.builtin'.git_branches{}<CR>", {silent=true})
 
 -- Gitsigns
 require('gitsigns').setup{
@@ -146,19 +155,12 @@ map("n", "<leader>gg", ":Git<CR>", {silent=true})
 map("n", "<leader>gs", ":Git<CR>", {silent=true})
 map("n", "<leader>gc", ":Git commit<CR>", {silent=true})
 map("n", "<leader>gf", ":Git fetch<CR>", {silent=true})
-map("n", "<leader>gb", ":Git branch<CR>", {silent=true})
-map("n", "<leader>grs", ":Git reset --hard")
+map("n", "<leader>gr", ":Git reset --hard")
 map("n", "<leader>go", ":Git checkout<space>")
 map("n", "<leader>ga", ":Git add<space>")
 
 -- Projectionist
 map("n", "<leader>a", ":A<CR>", {silent=true})
-
--- Notes
-map("n", "<leader>na", ":split note:")
-map("n", "<leader>nd", ":DeleteNote<space>")
-map("n", "<leader>nr", ":RecentNotes<CR>", {silent = true})
-map("n", "<leader>nn", ":split note:standup<CR>", {silent = true})
 
 -- Which key
 map("n", "<leader>", "<cmd>WhichKey '<Space>'<CR>", {silent = true})
@@ -188,5 +190,33 @@ vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 
 -- Coc explorer
 map("n", "<leader>e", ":CocCommand explorer<CR>")
 
+-- Coc snippets
+map("n", "<leader>cs", ":CocCommand snippets.editSnippets<CR>")
+
+
 -- Coc markdown preview
 map("n", "<leader>m", ":CocCommand markdown-preview-enhanced.openPreview<CR>")
+
+-- Netrw for browser
+vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in browser tab, for wsl
+
+-- Vim wiki
+vim.g.vimwiki_list = {{syntax = 'markdown', ext = '.md'}}
+
+-- Startify
+map("n", "<leader>ss", ":SSave<CR>")
+map("n", "<leader>sc", ":SClose<CR>")
+vim.g.startify_bookmarks = {
+    {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
+    {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
+    {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
+    {j = '/mnt/c/Users/anthony.buchholz/Projects/jolly-jackalopes'},
+    {n = '~/.config/nvim'}
+}
+vim.g.startify_lists = {
+    {type = 'sessions', header ={  '   Sessions' }},
+    {type = 'bookmarks', header ={  '   Bookmarks' }},
+    {type = 'files', header ={  '   MRU' }},
+    {type = 'dir', header = { '   MRU in '  .. vim.fn.getcwd()}},
+}
+vim.g.startify_change_to_vcs_root = 1

@@ -72,5 +72,3 @@ augroup dispatch
 augroup END
 nnoremap <leader>d :Dispatch<space>
 nnoremap <leader>dd :Dispatch<CR>
-
-let g:gruvbox_contrast_dark="soft"

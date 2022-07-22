@@ -1,4 +1,7 @@
 {
+  "snippets.ultisnips.directories": [
+    "/root/.local/share/nvim/plugged/vim-snippets/UltiSnips"
+  ],
   "coc.preferences.formatOnSaveFiletypes": ["json", "javascript", "typescript"],
   "diagnostic.virtualText": true,
   "diagnostic.virtualTextCurrentLineOnly": false
