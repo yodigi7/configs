@@ -3,6 +3,7 @@ local Plug = vim.fn['plug#']
 -- Use 'gx' to go to the github links
 -- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard
 -- https://github.com/unblevable/quick-scope
+-- https://github.com/ervandew/supertab -- Overload tab to cycle through autocomplete
 Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
 Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
 Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
@@ -12,7 +13,9 @@ Plug 'https://github.com/jiangmiao/auto-pairs' -- Auto open and close pairs
 Plug 'https://github.com/liuchengxu/vim-which-key' -- Show options for keybindings when in progress
 Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
 Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
+Plug 'https://github.com/tpope/vim-repeat' -- Allow plugins to work with dot command
 Plug 'https://github.com/tpope/vim-surround' -- Surrounding ysw)
+-- https://github.com/numToStr/Comment.nvim -- Alternative powerful commenter
 Plug 'https://github.com/tpope/vim-commentary' -- For Commenting gcc & gc
 Plug 'https://github.com/tpope/vim-fugitive' -- Git integration
 Plug 'https://github.com/tpope/vim-projectionist' -- Jump from implementation to test files
@@ -27,7 +30,7 @@ Plug('https://github.com/ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-
 -- Telescope
 Plug 'https://github.com/nvim-lua/plenary.nvim'
 Plug('https://github.com/nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
-Plug 'https://github.com/nvim-telescope/telescope-project.nvim'
+Plug 'https://github.com/nvim-telescope/telescope-project.nvim' -- TODO: look into removing as no longer needed
 
 Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
 
@@ -38,6 +41,7 @@ Plug('https://github.com/pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-l
 Plug('https://github.com/yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
 
 Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
+-- https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
 
 vim.call('plug#end')
 
@@ -57,46 +61,86 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "-"
 vim.g.pymode_python = "python3" -- Using python3
 
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.tabstop = 4
+vim.o.softtabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
+
+vim.o.cursorline = true
+
+vim.o.lazyredraw = true
+vim.o.backup = false
+vim.o.writebackup = false
+
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.incsearch = true
+vim.o.showmatch = true
+vim.o.hlsearch = true
+
+vim.o.mouse="a"
+
+vim.o.clipboard="unnamedplus"
+
+vim.o.autoread = true
+
+vim.o.magic = true --
+
+vim.o.path = vim.o.path .. "**"
+
+vim.o.smartindent = true -- smart indent when already on new line
+
+vim.o.list = true -- show tabs, nbsp, and trailing spaces
+vim.o.listchars = "trail:~,extends:>" -- Show trailing spaces as specific chars
+
+vim.o.scrolloff=5
+
 vim.api.nvim_command([[
-set number relativenumber
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set expandtab
-
-syntax on
-
-set cursorline
-
-set lazyredraw
-set nobackup
-set nowritebackup
-
-set ignorecase
-set smartcase
-set incsearch
-set showmatch
-set hlsearch
-
-set mouse=a
-
-set clipboard=unnamedplus
-
-set autoread
-
-set magic
-
-set path+=**
-
-set smartindent
-
-set list listchars=trail:~,extends:>
-
-set scrolloff=5
-
+syntax on -- syntax highlighting on
 colorscheme gruvbox
-
 ]])
+-- vim.api.nvim_command([[
+-- set number relativenumber
+-- set tabstop=4
+-- set softtabstop=4
+-- set shiftwidth=4
+-- set expandtab
+
+-- syntax on
+
+-- set cursorline
+
+-- set lazyredraw
+-- set nobackup
+-- set nowritebackup
+
+-- set ignorecase
+-- set smartcase
+-- set incsearch
+-- set showmatch
+-- set hlsearch
+
+-- set mouse=a
+
+-- set clipboard=unnamedplus
+
+-- set autoread
+
+-- set magic
+
+-- set path+=**
+
+-- set smartindent
+
+-- set list listchars=trail:~,extends:>
+
+-- set scrolloff=5
+
+-- colorscheme gruvbox
+
+-- ]])
 
 map("i", "jk", "<esc>")
 map("i", "kj", "<esc>")
@@ -111,6 +155,7 @@ map("", "<C-l>", "<C-w>l")
 -- Vimrc settings
 map("n", "<leader>vv", ":split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vl", ":split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
+map("n", "<leader>vlo", ":edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vo", ":edit $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vs", ":source $MYVIMRC<CR>:source ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 
@@ -185,7 +230,7 @@ map("n", "<F8>", ":TagbarToggle fjc<CR>")
 -- CoC
 map("n", "]", "<Plug>(coc-diagnostic-next)", {silent=true})
 map("n", "[", "<Plug>(coc-diagnostic-prev)", {silent=true})
-vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-pairs', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap' }
+vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-pairs', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
 
 -- Coc explorer
 map("n", "<leader>e", ":CocCommand explorer<CR>")
@@ -209,9 +254,11 @@ map("n", "<leader>sc", ":SClose<CR>")
 vim.g.startify_bookmarks = {
     {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
     {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
+    {n = '~/.config/nvim'},
+    {vw = '~/vimwiki/index.md'},
+    {s = '~/vimwiki/work/Standup.md'},
     {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
     {j = '/mnt/c/Users/anthony.buchholz/Projects/jolly-jackalopes'},
-    {n = '~/.config/nvim'}
 }
 vim.g.startify_lists = {
     {type = 'sessions', header ={  '   Sessions' }},
