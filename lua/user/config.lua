@@ -61,32 +61,32 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "-"
 vim.g.pymode_python = "python3" -- Using python3
 
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.tabstop = 4
-vim.o.softtabstop = 4
-vim.o.shiftwidth = 4
-vim.o.expandtab = true
+vim.o.number = true -- show number instead of 0 line number
+vim.o.relativenumber = true -- use relative line numbers
+vim.o.tabstop = 4 -- tabs to use 4 spaces
+vim.o.softtabstop = 4 -- tabs to use 4 spaces
+vim.o.shiftwidth = 4 -- > to use 4 spaces
+vim.o.expandtab = true -- expand tabs to spaces
 
-vim.o.cursorline = true
+vim.o.cursorline = true -- show cursorline for which line currently on
 
-vim.o.lazyredraw = true
+vim.o.lazyredraw = true -- don't redraw screen when executing things like macros
 vim.o.backup = false
 vim.o.writebackup = false
 
 vim.o.ignorecase = true
-vim.o.smartcase = true
+vim.o.smartcase = true -- only care about case if searching with at least one upper
 vim.o.incsearch = true
 vim.o.showmatch = true
 vim.o.hlsearch = true
 
-vim.o.mouse="a"
+vim.o.mouse="a" -- allow mouse usage
 
-vim.o.clipboard="unnamedplus"
+vim.o.clipboard="unnamedplus" -- connect windows and linux clipboards
 
-vim.o.autoread = true
+vim.o.autoread = true -- auto update file is changed outside of nvim
 
-vim.o.magic = true --
+vim.o.magic = true -- magic search
 
 vim.o.path = vim.o.path .. "**"
 
@@ -95,10 +95,10 @@ vim.o.smartindent = true -- smart indent when already on new line
 vim.o.list = true -- show tabs, nbsp, and trailing spaces
 vim.o.listchars = "trail:~,extends:>" -- Show trailing spaces as specific chars
 
-vim.o.scrolloff=5
+vim.o.scrolloff=5 -- set option to give 5 lines of buffer above and below for scrolling
 
 vim.api.nvim_command([[
-syntax on -- syntax highlighting on
+syntax on
 colorscheme gruvbox
 ]])
 -- vim.api.nvim_command([[
