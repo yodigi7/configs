@@ -1,16 +1,22 @@
 local vim = vim -- Only show error 'Undefined global vim' on this top line
+-- TODO: migrate to packer https://github.com/wbthomason/packer.nvim
+-- for profiling and speedups - https://github.com/lewis6991/impatient.nvim
 vim.call('plug#begin')
 local Plug = vim.fn['plug#']
 -- Use 'gx' to go to the github links
 -- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard
 -- https://github.com/unblevable/quick-scope
 -- https://github.com/ervandew/supertab -- Overload tab to cycle through autocomplete
+-- https://github.com/NMAC427/guess-indent.nvim -- For determining tab style for file
+-- https://github.com/PeterRincker/vim-argumentative -- For manipulating function arguments such as swapping position
+-- https://github.com/L3MON4D3/LuaSnip -- Advanced snippet program
 Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
 Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
 Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
 Plug 'https://github.com/vim-airline/vim-airline' -- Status bar
 Plug 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
-Plug 'https://github.com/jiangmiao/auto-pairs' -- Auto open and close pairs
+Plug 'https://github.com/windwp/nvim-autopairs' -- Auto open and close pairs
+-- TODO: update to: https://github.com/folke/which-key.nvim
 Plug 'https://github.com/liuchengxu/vim-which-key' -- Show options for keybindings when in progress
 Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
 Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
@@ -39,7 +45,6 @@ Plug 'https://github.com/theHamsta/nvim-dap-virtual-text'
 -- Telescope
 Plug 'https://github.com/nvim-lua/plenary.nvim' -- General utils for a lot of plug-ins
 Plug('https://github.com/nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
-Plug 'https://github.com/nvim-telescope/telescope-project.nvim' -- TODO: look into removing as no longer needed
 
 Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
 
@@ -49,7 +54,7 @@ Plug('https://github.com/pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-l
 Plug('https://github.com/yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
 
 Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
--- https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
+-- TODO: https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
 
 vim.call('plug#end')
 
@@ -98,7 +103,8 @@ vim.o.autoread = true -- auto update file is changed outside of nvim
 
 vim.o.magic = true -- magic search
 
-vim.o.path = vim.o.path .. "**"
+-- vim.o.path = vim.o.path .. "**"
+vim.opt.path:append("**")
 
 vim.o.smartindent = true -- smart indent when already on new line
 
@@ -118,6 +124,9 @@ map("i", "kj", "<esc>")
 -- map("n", "<CR>", "o<esc>")
 map("n", "Y", "y$")
 map("n", "<BS>", "hx")
+map("n", "<leader>w", "<cmd>w<CR>")
+map("n", "<leader>q", "<cmd>q<CR>")
+map("n", "Q", "<NOP>") -- Don't need Ex mode
 map("", "<C-h>", "<C-w>h")
 map("", "<C-j>", "<C-w>j")
 map("", "<C-k>", "<C-w>k")
@@ -132,26 +141,16 @@ map("n", "<leader>vs", "<cmd>source $MYVIMRC<CR><cmd>source ~/.config/nvim/lua/u
 
 -- Telescope
 local telescope = require'telescope'
-telescope.load_extension("project")
-telescope.setup {
-    pickers = {
-        find_files = {
-            hidden = true
-        }
-    }
-}
 map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", {silent=true})
 map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", {silent=true})
 map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
 map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", {silent=true})
 map("n", "<leader>fr", "<cmd>lua<space>require'telescope.builtin'.registers{}<CR>", {silent=true})
 map("n", "<leader>fk", "<cmd>lua<space>require'telescope.builtin'.keymaps{}<CR>", {silent=true})
--- TODO: Figure out why this may not be working
 map("n", "<leader>fq", "<cmd>lua<space>require'telescope.builtin'.quickfix{}<CR>", {silent=true})
 map("n", "<leader>fgs", "<cmd>lua<space>require'telescope.builtin'.git_status{}<CR>", {silent=true})
 map("n", "<leader>fgc", "<cmd>lua<space>require'telescope.builtin'.git_commits{}<CR>", {silent=true})
 map("n", "<leader>fgb", "<cmd>lua<space>require'telescope.builtin'.git_branches{}<CR>", {silent=true})
-map("", "<leader>p", "<cmd>lua<space>require'telescope'.extensions.project.project{}<CR>", {silent=true})
 
 -- Gitsigns
 require('gitsigns').setup({
@@ -205,6 +204,8 @@ vim.g.floaterm_height = 0.9
 map("n", "<F8>", "<cmd>TagbarToggle fjc<CR>")
 
 -- CoC
+vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
+
 vim.o.updatetime=300 -- update stuff only after 300 ms of no typing
 
     -- TODO: Integrate this into the below mapping
@@ -246,8 +247,6 @@ map("n", "ga", "<Plug>(coc-codeaction-line)", { silent=true })
 map("x", "ga", "<Plug>(coc-codeaction-selected)", { silent=true })
 map("n", "gA", "<Plug>(coc-codeaction)", { silent=true })
 
-vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-pairs', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
-
 -- Coc explorer
 map("n", "<leader>e", "<cmd>CocCommand explorer<CR>")
 
@@ -287,6 +286,20 @@ vim.g.startify_change_to_vcs_root = 1
 -- Dispatch
 map("n", "<leader>d", "<cmd>Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
+
+-- Autopairs
+require("nvim-autopairs").setup({
+    map_cr = false
+})
+_G.MUtils= {}
+MUtils.completion_confirm=function()
+  if vim.fn.pumvisible() ~= 0  then
+    return vim.fn["coc#_select_confirm"]()
+  else
+    return npairs.autopairs_cr()
+  end
+end
+map('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- DAP - Debugger
 map("n", "<leader>db", "<cmd>lua require('dap').toggle_breakpoint()<CR>", {silent=true})
