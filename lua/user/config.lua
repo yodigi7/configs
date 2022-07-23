@@ -33,6 +33,7 @@ Plug 'https://github.com/mfussenegger/nvim-dap'
 Plug 'https://github.com/mfussenegger/nvim-dap-python'
 Plug 'https://github.com/leoluz/nvim-dap-go'
 Plug 'https://github.com/rcarriga/nvim-dap-ui'
+Plug 'https://github.com/theHamsta/nvim-dap-virtual-text'
 
 -- Telescope
 Plug 'https://github.com/nvim-lua/plenary.nvim' -- General utils for a lot of plug-ins
@@ -122,11 +123,11 @@ map("", "<C-k>", "<C-w>k")
 map("", "<C-l>", "<C-w>l")
 
 -- Vimrc settings
-map("n", "<leader>vv", ":split $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vl", ":split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
-map("n", "<leader>vlo", ":edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
-map("n", "<leader>vo", ":edit $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vs", ":source $MYVIMRC<CR>:source ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
+map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
+map("n", "<leader>vl", "<cmd>split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
+map("n", "<leader>vlo", "<cmd>edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
+map("n", "<leader>vo", "<cmd>edit $MYVIMRC<CR>", {silent=true})
+map("n", "<leader>vs", "<cmd>source $MYVIMRC<CR><cmd>source ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 
 -- Telescope
 local telescope = require'telescope'
@@ -152,54 +153,55 @@ map("n", "<leader>fgb", "<cmd>lua<space>require'telescope.builtin'.git_branches{
 map("", "<leader>p", "<cmd>lua<space>require'telescope'.extensions.project.project{}<CR>", {silent=true})
 
 -- Gitsigns
-require('gitsigns').setup{
+require('gitsigns').setup({
     current_line_blame = true,
     numhl = true,
 
     on_attach = function(bufnr)
-        local gs = package.loaded.gitsigns
-        local function map(mode, lhs, rhs, opts)
+        local function localmap(mode, lhs, rhs, opts)
             opts = vim.tbl_extend('force', {noremap = true, silent = true}, opts or {})
             vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
         end
 
-        map('n', '<leader>gh', ':Gitsigns stage_hunk<CR>')
-        map('v', '<leader>gh', ':Gitsigns stage_hunk<CR>')
+        localmap('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
+        localmap('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
     end
-}
+})
+map('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
+map('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
 
 -- Fugitive
-map("n", "<leader>gp", ":Git push<CR>")
-map("n", "<leader>gg", ":Git<CR>", {silent=true})
-map("n", "<leader>gs", ":Git<CR>", {silent=true})
-map("n", "<leader>gc", ":Git commit<CR>", {silent=true})
-map("n", "<leader>gf", ":Git fetch<CR>", {silent=true})
-map("n", "<leader>gr", ":Git reset --hard")
-map("n", "<leader>go", ":Git checkout<space>")
-map("n", "<leader>ga", ":Git add<space>")
+map("n", "<leader>gp", "<cmd>Git push<CR>")
+map("n", "<leader>gg", "<cmd>Git<CR>", {silent=true})
+map("n", "<leader>gs", "<cmd>Git<CR>", {silent=true})
+map("n", "<leader>gc", "<cmd>Git commit<CR>", {silent=true})
+map("n", "<leader>gf", "<cmd>Git fetch<CR>", {silent=true})
+map("n", "<leader>gr", "<cmd>Git reset --hard")
+map("n", "<leader>go", "<cmd>Git checkout<space>")
+map("n", "<leader>ga", "<cmd>Git add<space>")
 
 -- Projectionist
-map("n", "<leader>a", ":A<CR>", {silent=true})
+map("n", "<leader>a", "<cmd>A<CR>", {silent=true})
 
 -- Which key
 map("n", "<leader>", "<cmd>WhichKey '<Space>'<CR>", {silent = true})
 
 -- Harpoon
-map("n", "<leader>ha", ":lua require('harpoon.mark').add_file()<CR>")
-map("n", "<leader>hh", ":lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
-map("n", "<leader>ht", ":lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
-map("n", "<tab>", ":lua require('harpoon.ui').nav_next()<CR>", {silent=true})
-map("n", "<S-tab>", ":lua require('qharpoon.ui').nav_prev()<CR>", {silent=true})
+map("n", "<leader>ha", "<cmd>lua require('harpoon.mark').add_file()<CR>")
+map("n", "<leader>hh", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
+map("n", "<leader>ht", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
+map("n", "<tab>", "<cmd>lua require('harpoon.ui').nav_next()<CR>", {silent=true})
+map("n", "<S-tab>", "<cmd>lua require('qharpoon.ui').nav_prev()<CR>", {silent=true})
 
 -- Floaterm
-map("n", "<leader>tt", ":FloatermToggle<CR>", {silent=true})
-map("n", "<leader>tn", ":FloatermNew<CR>", {silent=true})
-map("t", "<esc>", '<C-\\><C-n>:FloatermToggle<CR>', {silent=true})
+map("n", "<leader>tt", "<cmd>FloatermToggle<CR>", {silent=true})
+map("n", "<leader>tn", "<cmd>FloatermNew<CR>", {silent=true})
+map("t", "<esc>", '<C-\\><C-n><cmd>FloatermToggle<CR>', {silent=true})
 vim.g.floaterm_width = 0.9
 vim.g.floaterm_height = 0.9
 
 -- Tagbar
-map("n", "<F8>", ":TagbarToggle fjc<CR>")
+map("n", "<F8>", "<cmd>TagbarToggle fjc<CR>")
 
 -- CoC
 vim.o.updatetime=300 -- update stuff only after 300 ms of no typing
@@ -222,7 +224,7 @@ map("n", "gd", "<Plug>(coc-definition)", {silent=true, noremap=false})
 map("n", "gy", "<Plug>(coc-type-definition)", {silent=true, noremap=false})
 map("n", "gi", "<Plug>(coc-implementation)", {silent=true, noremap=false})
 map("n", "gr", "<Plug>(coc-references)", {silent=true, noremap=false})
-map("n", "K", ":call ShowDocumentation()<CR>", { silent=true })
+map("n", "K", "<cmd>call ShowDocumentation()<CR>", { silent=true })
 -- Symbol renaming.
 map("n", "<leader>rn", "<Plug>(coc-rename)", { silent=true, noremap=false })
 
@@ -246,14 +248,14 @@ map("n", "gA", "<Plug>(coc-codeaction)", { silent=true })
 vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-pairs', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
 
 -- Coc explorer
-map("n", "<leader>e", ":CocCommand explorer<CR>")
+map("n", "<leader>e", "<cmd>CocCommand explorer<CR>")
 
 -- Coc snippets
-map("n", "<leader>cs", ":CocCommand snippets.editSnippets<CR>")
+map("n", "<leader>cs", "<cmd>CocCommand snippets.editSnippets<CR>")
 
 
 -- Coc markdown preview
-map("n", "<leader>m", ":CocCommand markdown-preview-enhanced.openPreview<CR>")
+map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
 -- Netrw for browser
 vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
@@ -262,8 +264,8 @@ vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and 
 vim.g.vimwiki_list = {{syntax = 'markdown', ext = '.md'}}
 
 -- Startify
-map("n", "<leader>ss", ":SSave<CR>")
-map("n", "<leader>sc", ":SClose<CR>")
+map("n", "<leader>ss", "<cmd>SSave<CR>")
+map("n", "<leader>sc", "<cmd>SClose<CR>")
 vim.g.startify_bookmarks = {
     {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
     {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
@@ -282,20 +284,31 @@ vim.g.startify_lists = {
 vim.g.startify_change_to_vcs_root = 1
 
 -- Dispatch
-map("n", "<leader>d", ":Dispatch<space>")
-map("n", "<leader>dd", ":Dispatch<CR>")
+map("n", "<leader>d", "<cmd>Dispatch<space>")
+map("n", "<leader>dd", "<cmd>Dispatch<CR>")
 
 -- DAP - Debugger
-map("n", "<leader>db", ":lua require('dap').toggle_breakpoint()<CR>", {})
-map("n", "<F1>", ":lua require('dap').continue()<CR>", {})
-map("n", "<F2>", ":lua require('dap').step_out()<CR>", {})
-map("n", "<F3>", ":lua require('dap').step_over()<CR>", {})
-map("n", "<F4>", ":lua require('dap').step_into()<CR>", {})
-map("n", "<F5>", ":lua require('dapui').toggle()<CR>", {})
+map("n", "<leader>db", "<cmd>lua require('dap').toggle_breakpoint()<CR>", {silent=true})
+map("n", "<F1>", "<cmd>lua require('dap').continue()<CR>", {silent=true})
+map("n", "<F2>", "<cmd>lua require('dap').step_out()<CR>", {silent=true})
+map("n", "<F3>", "<cmd>lua require('dap').step_over()<CR>", {silent=true})
+map("n", "<F4>", "<cmd>lua require('dap').step_into()<CR>", {silent=true})
+map("n", "<F5>", "<cmd>lua require('dapui').toggle()<CR>", {silent=true})
 
-require("dapui").setup()
+local dap, dapui = require("dap"), require("dapui")
+require("dap-go").setup()
+dapui.setup()
+
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
     -- Node JS Setup
-local dap = require('dap')
 dap.adapters.node2 = {
   type = 'executable',
   command = 'node',
