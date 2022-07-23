@@ -27,8 +27,15 @@ Plug 'https://github.com/kana/vim-textobj-user' -- Requirement for around everyt
 Plug 'https://github.com/preservim/tagbar' -- Tagbar for code navigation
 Plug('https://github.com/ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-lockfile'}) -- Requirement for Tagbar
 
+-- DAP (Debugger)
+Plug 'https://github.com/mfussenegger/nvim-dap'
+-- List of adapters - https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
+Plug 'https://github.com/mfussenegger/nvim-dap-python'
+Plug 'https://github.com/leoluz/nvim-dap-go'
+Plug 'https://github.com/rcarriga/nvim-dap-ui'
+
 -- Telescope
-Plug 'https://github.com/nvim-lua/plenary.nvim'
+Plug 'https://github.com/nvim-lua/plenary.nvim' -- General utils for a lot of plug-ins
 Plug('https://github.com/nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
 Plug 'https://github.com/nvim-telescope/telescope-project.nvim' -- TODO: look into removing as no longer needed
 
@@ -136,6 +143,7 @@ map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", {silent=true})
 map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
 map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", {silent=true})
 map("n", "<leader>fr", "<cmd>lua<space>require'telescope.builtin'.registers{}<CR>", {silent=true})
+map("n", "<leader>fk", "<cmd>lua<space>require'telescope.builtin'.keymaps{}<CR>", {silent=true})
 -- TODO: Figure out why this may not be working
 map("n", "<leader>fq", "<cmd>lua<space>require'telescope.builtin'.quickfix{}<CR>", {silent=true})
 map("n", "<leader>fgs", "<cmd>lua<space>require'telescope.builtin'.git_status{}<CR>", {silent=true})
@@ -276,3 +284,39 @@ vim.g.startify_change_to_vcs_root = 1
 -- Dispatch
 map("n", "<leader>d", ":Dispatch<space>")
 map("n", "<leader>dd", ":Dispatch<CR>")
+
+-- DAP - Debugger
+map("n", "<leader>db", ":lua require('dap').toggle_breakpoint()<CR>", {})
+map("n", "<F1>", ":lua require('dap').continue()<CR>", {})
+map("n", "<F2>", ":lua require('dap').step_out()<CR>", {})
+map("n", "<F3>", ":lua require('dap').step_over()<CR>", {})
+map("n", "<F4>", ":lua require('dap').step_into()<CR>", {})
+map("n", "<F5>", ":lua require('dapui').toggle()<CR>", {})
+
+require("dapui").setup()
+    -- Node JS Setup
+local dap = require('dap')
+dap.adapters.node2 = {
+  type = 'executable',
+  command = 'node',
+  args = {os.getenv('HOME') .. '/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js'},
+}
+dap.configurations.javascript = {
+  {
+    name = 'Launch',
+    type = 'node2',
+    request = 'launch',
+    program = '${file}',
+    cwd = vim.fn.getcwd(),
+    sourceMaps = true,
+    protocol = 'inspector',
+    console = 'integratedTerminal',
+  },
+  {
+    -- For this to work you need to make sure the node process is started with the `--inspect` flag.
+    name = 'Attach to process',
+    type = 'node2',
+    request = 'attach',
+    processId = require'dap.utils'.pick_process,
+  },
+}
