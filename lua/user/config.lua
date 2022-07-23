@@ -101,46 +101,6 @@ vim.api.nvim_command([[
 syntax on
 colorscheme gruvbox
 ]])
--- vim.api.nvim_command([[
--- set number relativenumber
--- set tabstop=4
--- set softtabstop=4
--- set shiftwidth=4
--- set expandtab
-
--- syntax on
-
--- set cursorline
-
--- set lazyredraw
--- set nobackup
--- set nowritebackup
-
--- set ignorecase
--- set smartcase
--- set incsearch
--- set showmatch
--- set hlsearch
-
--- set mouse=a
-
--- set clipboard=unnamedplus
-
--- set autoread
-
--- set magic
-
--- set path+=**
-
--- set smartindent
-
--- set list listchars=trail:~,extends:>
-
--- set scrolloff=5
-
--- colorscheme gruvbox
-
--- ]])
 
 map("i", "jk", "<esc>")
 map("i", "kj", "<esc>")
