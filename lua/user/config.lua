@@ -34,10 +34,9 @@ Plug 'https://github.com/nvim-telescope/telescope-project.nvim' -- TODO: look in
 
 Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
 
---CoC
+-- CoC
 Plug 'https://github.com/neoclide/coc.nvim'  -- Auto Completion
 Plug('https://github.com/pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-lockfile && yarn build', branch = 'main' })
--- TODO
 Plug('https://github.com/yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
 
 Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
@@ -49,6 +48,7 @@ vim.call('plug#end')
 vim.g.gruvbox_contrast_dark="hard"
 
 -- Functional wrapper for mapping custom keybindings
+-- See :h map-arguments
 function map(mode, lhs, rhs, opts)
     local options = { noremap = true }
     if opts then
@@ -61,6 +61,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "-"
 vim.g.pymode_python = "python3" -- Using python3
 
+-- Setting options
 vim.o.number = true -- show number instead of 0 line number
 vim.o.relativenumber = true -- use relative line numbers
 vim.o.tabstop = 4 -- tabs to use 4 spaces
@@ -102,6 +103,7 @@ syntax on
 colorscheme gruvbox
 ]])
 
+-- Mappings
 map("i", "jk", "<esc>")
 map("i", "kj", "<esc>")
 -- map("n", "<CR>", "o<esc>")
@@ -132,10 +134,14 @@ telescope.setup {
 map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", {silent=true})
 map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", {silent=true})
 map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
-map("", "<leader>p", "<cmd>lua<space>require'telescope'.extensions.project.project{}<CR>", {silent=true})
+map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", {silent=true})
+map("n", "<leader>fr", "<cmd>lua<space>require'telescope.builtin'.registers{}<CR>", {silent=true})
+-- TODO: Figure out why this may not be working
+map("n", "<leader>fq", "<cmd>lua<space>require'telescope.builtin'.quickfix{}<CR>", {silent=true})
 map("n", "<leader>fgs", "<cmd>lua<space>require'telescope.builtin'.git_status{}<CR>", {silent=true})
 map("n", "<leader>fgc", "<cmd>lua<space>require'telescope.builtin'.git_commits{}<CR>", {silent=true})
 map("n", "<leader>fgb", "<cmd>lua<space>require'telescope.builtin'.git_branches{}<CR>", {silent=true})
+map("", "<leader>p", "<cmd>lua<space>require'telescope'.extensions.project.project{}<CR>", {silent=true})
 
 -- Gitsigns
 require('gitsigns').setup{
@@ -188,8 +194,47 @@ vim.g.floaterm_height = 0.9
 map("n", "<F8>", ":TagbarToggle fjc<CR>")
 
 -- CoC
-map("n", "]", "<Plug>(coc-diagnostic-next)", {silent=true})
-map("n", "[", "<Plug>(coc-diagnostic-prev)", {silent=true})
+vim.o.updatetime=300 -- update stuff only after 300 ms of no typing
+
+    -- TODO: Integrate this into the below mapping
+    -- function check_back_space()
+    --     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+    --     local linetext = vim.api.nvim_get_current_line()
+    --     return col == 0 or string.match(linetext:sub(col, col), '%s') ~= nil
+    -- end
+    -- Overload tab to go next/previous on popup menu or next place in snippet
+map("i", "<TAB>", [[ pumvisible() ? "\<C-n>" : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh() ]], { silent = true, expr = true })
+-- map("i", "<C-SPACE>", "coc#refresh()", {expr = true})
+map("i", "<S-TAB>", [[pumvisible() ? "\<C-p>" : "\<C-h>"]], {expr = true})
+map("i", "<CR>", [[pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>\<C-r>=coc#on_enter()\<CR>"]], {silent = true, expr = true})
+
+map("n", "]", "<Plug>(coc-diagnostic-next)", {silent=true, noremap=false})
+map("n", "[", "<Plug>(coc-diagnostic-prev)", {silent=true, noremap=false})
+map("n", "gd", "<Plug>(coc-definition)", {silent=true, noremap=false})
+map("n", "gy", "<Plug>(coc-type-definition)", {silent=true, noremap=false})
+map("n", "gi", "<Plug>(coc-implementation)", {silent=true, noremap=false})
+map("n", "gr", "<Plug>(coc-references)", {silent=true, noremap=false})
+map("n", "K", ":call ShowDocumentation()<CR>", { silent=true })
+-- Symbol renaming.
+map("n", "<leader>rn", "<Plug>(coc-rename)", { silent=true, noremap=false })
+
+
+-- Map function and class text objects
+-- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+map("x", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
+map("o", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
+map("x", "af", "<Plug>(coc-funcobj-a)", { noremap=false })
+map("o", "af", "<Plug>(coc-funcobj-a)", { noremap=false })
+map("x", "ic", "<Plug>(coc-classobj-i)", { noremap=false })
+map("o", "ic", "<Plug>(coc-classobj-i)", { noremap=false })
+map("x", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
+map("o", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
+
+-- CoC pydocstring
+map("n", "ga", "<Plug>(coc-codeaction-line)", { silent=true })
+map("x", "ga", "<Plug>(coc-codeaction-selected)", { silent=true })
+map("n", "gA", "<Plug>(coc-codeaction)", { silent=true })
+
 vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-pairs', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
 
 -- Coc explorer
@@ -203,7 +248,7 @@ map("n", "<leader>cs", ":CocCommand snippets.editSnippets<CR>")
 map("n", "<leader>m", ":CocCommand markdown-preview-enhanced.openPreview<CR>")
 
 -- Netrw for browser
-vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in browser tab, for wsl
+vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
 
 -- Vim wiki
 vim.g.vimwiki_list = {{syntax = 'markdown', ext = '.md'}}
@@ -227,3 +272,7 @@ vim.g.startify_lists = {
     {type = 'dir', header = { '   MRU in '  .. vim.fn.getcwd()}},
 }
 vim.g.startify_change_to_vcs_root = 1
+
+-- Dispatch
+map("n", "<leader>d", ":Dispatch<space>")
+map("n", "<leader>dd", ":Dispatch<CR>")
