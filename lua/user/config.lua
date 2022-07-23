@@ -1,3 +1,4 @@
+local vim = vim -- Only show error 'Undefined global vim' on this top line
 vim.call('plug#begin')
 local Plug = vim.fn['plug#']
 -- Use 'gx' to go to the github links
@@ -57,7 +58,7 @@ vim.g.gruvbox_contrast_dark="hard"
 
 -- Functional wrapper for mapping custom keybindings
 -- See :h map-arguments
-function map(mode, lhs, rhs, opts)
+local function map(mode, lhs, rhs, opts)
     local options = { noremap = true }
     if opts then
         options = vim.tbl_extend("force", options, opts)
