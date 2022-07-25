@@ -146,11 +146,10 @@ local vim_conf_group = vim.api.nvim_create_augroup("VimConfigGroup", {clear=true
 local events = {"BufWrite", "FileWritePre", "FileAppendPre", "FilterWritePre"}
 for _, event in pairs(events) do
     vim.api.nvim_create_autocmd(event, {
-        pattern = { "*config.lua", "*init.vim" },
+        pattern = "init.lua",
         group = vim_conf_group,
         callback = function ()
             vim.schedule(function ()
-                package.loaded["user/config"] = nil
                 vim.cmd(":source $MYVIMRC")
                 print("Loaded config files for vim")
             end)
@@ -175,11 +174,9 @@ for _, event in pairs(events) do
 end
 
 -- Vimrc settings
+map("n", "<leader>v", "<cmd>split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vl", "<cmd>split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
-map("n", "<leader>vlo", "<cmd>edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vo", "<cmd>edit $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vs", "<cmd>lua package.loaded[\"user/config\"]=nil<CR><cmd>source $MYVIMRC<CR>", {silent=true})
 
 -- Telescope
 local telescope = require'telescope'
@@ -217,6 +214,7 @@ map("n", "<leader>gp", "<cmd>Git push<CR>")
 map("n", "<leader>gg", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gs", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gc", "<cmd>Git commit<CR>", {silent=true})
+map("n", "<leader>gcc", "<cmd>Git commit<CR>", {silent=true})
 map("n", "<leader>gca", "<cmd>Git commit --amend<CR>", {silent=true})
 map("n", "<leader>gf", "<cmd>Git fetch<CR>", {silent=true})
 map("n", "<leader>gr", "<cmd>Git reset --hard")
@@ -265,6 +263,48 @@ wk.register({
     h = "Toggle harpoon quick menu",
     t = "Toggle harpoon quick menu",
   },
+  g = {
+    name = "Git",
+    p = "Git push",
+    g = "Git status",
+    s = "Git status",
+    f = "Git fetch",
+    r = "Git reset --hard",
+    o = "Git checkout",
+    a = "Git add",
+    c = {
+        name = "commit",
+        a = "Git commit --amend",
+        c = "Git commit"
+    },
+  },
+  r = {
+      name = "rename",
+      n = "rename"
+  },
+  e = "explorer",
+  c = {
+      name = "create",
+      s = "create snippet",
+  },
+  m = "open markdown preview",
+  d = {
+      d = "Run Dispatch",
+      b = "Toggle debug point",
+  },
+  w = {
+      name = "write file",
+      q = "save and quit",
+  },
+  q = "quit file",
+  b = {
+      d = "delete buffer",
+  },
+  v = {
+    name = "vim config",
+    v = "open init.lua in split",
+    o = "open init.lua in curr window",
+  }
 }, { prefix = "<leader>" })
 
 -- Harpoon
