@@ -10,14 +10,15 @@ local Plug = vim.fn['plug#']
 -- https://github.com/NMAC427/guess-indent.nvim -- For determining tab style for file
 -- https://github.com/PeterRincker/vim-argumentative -- For manipulating function arguments such as swapping position
 -- https://github.com/L3MON4D3/LuaSnip -- Advanced snippet program
+Plug 'https://github.com/akinsho/bufferline.nvim' -- Shows buffers as tabs in line like VSCode
 Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
 Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
 Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
 Plug 'https://github.com/vim-airline/vim-airline' -- Status bar
 Plug 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
 Plug 'https://github.com/windwp/nvim-autopairs' -- Auto open and close pairs
--- TODO: update to: https://github.com/folke/which-key.nvim
-Plug 'https://github.com/liuchengxu/vim-which-key' -- Show options for keybindings when in progress
+Plug 'https://github.com/folke/which-key.nvim' -- Show options for keybindings when in progress
+-- Plug 'https://github.com/liuchengxu/vim-which-key'
 Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
 Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
 Plug 'https://github.com/tpope/vim-repeat' -- Allow plugins to work with dot command
@@ -113,6 +114,8 @@ vim.o.listchars = "trail:~,extends:>" -- Show trailing spaces as specific chars
 
 vim.o.scrolloff=5 -- set option to give 5 lines of buffer above and below for scrolling
 
+vim.opt.laststatus=3
+
 vim.api.nvim_command([[
 syntax on
 colorscheme gruvbox
@@ -127,17 +130,39 @@ map("n", "<BS>", "hx")
 map("n", "<leader>w", "<cmd>w<CR>")
 map("n", "<leader>q", "<cmd>q<CR>")
 map("n", "Q", "<NOP>") -- Don't need Ex mode
+map("n", "H", "<cmd>bprevious<CR>") -- Easier switching between buffers
+map("n", "L", "<cmd>bnext<CR>") -- Easier switching between buffers
+map("n", "<leader>bd", "<cmd>bdelete<CR>") -- Easy delete buffer
+map("n", "<leader>h", "<cmd>noh<CR>") -- Quick noh
 map("", "<C-h>", "<C-w>h")
 map("", "<C-j>", "<C-w>j")
 map("", "<C-k>", "<C-w>k")
 map("", "<C-l>", "<C-w>l")
+
+-- Auto source files if saving init.vim or config.lua
+local vim_conf_group = vim.api.nvim_create_augroup("VimConfigGroup", {clear=true})
+vim.api.nvim_create_autocmd("BufWrite", {
+    pattern = { "*config.lua", "*init.vim" },
+    group = vim_conf_group,
+    callback = function ()
+        vim.schedule(function ()
+            package.loaded["user/config"] = nil
+            vim.cmd(":source $MYVIMRC")
+            print("Loaded config files for vim")
+        end)
+    end
+
+})
 
 -- Vimrc settings
 map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vl", "<cmd>split ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vlo", "<cmd>edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vo", "<cmd>edit $MYVIMRC<CR>", {silent=true})
-map("n", "<leader>vs", "<cmd>source $MYVIMRC<CR><cmd>source ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
+map("n", "<leader>vs", "<cmd>lua package.loaded[\"user/config\"]=nil<CR><cmd>source $MYVIMRC<CR>", {silent=true})
+
+            package.loaded["user/config"] = nil
+-- map("n", "<leader>vs", "<cmd>source $MYVIMRC<CR>", {silent=true})
 
 -- Telescope
 local telescope = require'telescope'
@@ -184,7 +209,29 @@ map("n", "<leader>ga", "<cmd>Git add<space>")
 map("n", "<leader>a", "<cmd>A<CR>", {silent=true})
 
 -- Which key
-map("n", "<leader>", "<cmd>WhichKey '<Space>'<CR>", {silent = true})
+-- map("n", "<leader>", "<cmd>WhichKey '<Space>'<CR>", {silent = true})
+local wk = require("which-key")
+-- As an example, we will create the following mappings:
+--  * <leader>ff find files
+--  * <leader>fr show recent files
+--  * <leader>fb Foobar
+-- we'll document:
+--  * <leader>fn new file
+--  * <leader>fe edit file
+-- and hide <leader>1
+
+wk.register({
+  f = {
+    name = "file", -- optional group name
+    f = "Find File",
+    b = "Find Buffers",
+    g = "Find with Grep",
+    h = "Find Help Tags",
+    q = "Find Quickfix",
+    k = "Find Keymaps",
+    r = "Find Registers",
+  },
+}, { prefix = "<leader>" })
 
 -- Harpoon
 map("n", "<leader>ha", "<cmd>lua require('harpoon.mark').add_file()<CR>")
@@ -288,7 +335,8 @@ map("n", "<leader>d", "<cmd>Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
 
 -- Autopairs
-require("nvim-autopairs").setup({
+local npairs = require("nvim-autopairs")
+npairs.setup({
     map_cr = false
 })
 _G.MUtils= {}
@@ -347,3 +395,8 @@ dap.configurations.javascript = {
     processId = require'dap.utils'.pick_process,
   },
 }
+
+-- Bufferline
+require('bufferline').setup({diagnostics = "coc"})
+map("n", "H", ":BufferLineCyclePrev<CR>", {silent=true})
+map("n", "L", ":BufferLineCycleNext<CR>", {silent=true})
