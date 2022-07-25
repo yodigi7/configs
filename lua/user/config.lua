@@ -10,7 +10,8 @@ local Plug = vim.fn['plug#']
 -- https://github.com/NMAC427/guess-indent.nvim -- For determining tab style for file
 -- https://github.com/PeterRincker/vim-argumentative -- For manipulating function arguments such as swapping position
 -- https://github.com/L3MON4D3/LuaSnip -- Advanced snippet program
-Plug 'https://github.com/akinsho/bufferline.nvim' -- Shows buffers as tabs in line like VSCode
+-- If want more in-depth changing of buffers/tabs line
+-- Plug 'https://github.com/akinsho/bufferline.nvim' -- Shows buffers as tabs in line like VSCode
 Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
 Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
 Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
@@ -128,6 +129,7 @@ map("i", "kj", "<esc>")
 map("n", "Y", "y$")
 map("n", "<BS>", "hx")
 map("n", "<leader>w", "<cmd>w<CR>")
+map("n", "<leader>wq", "<cmd>wq<CR>")
 map("n", "<leader>q", "<cmd>q<CR>")
 map("n", "Q", "<NOP>") -- Don't need Ex mode
 map("n", "H", "<cmd>bprevious<CR>") -- Easier switching between buffers
@@ -141,18 +143,36 @@ map("", "<C-l>", "<C-w>l")
 
 -- Auto source files if saving init.vim or config.lua
 local vim_conf_group = vim.api.nvim_create_augroup("VimConfigGroup", {clear=true})
-vim.api.nvim_create_autocmd("BufWrite", {
-    pattern = { "*config.lua", "*init.vim" },
-    group = vim_conf_group,
-    callback = function ()
-        vim.schedule(function ()
-            package.loaded["user/config"] = nil
-            vim.cmd(":source $MYVIMRC")
-            print("Loaded config files for vim")
-        end)
-    end
+local events = {"BufWrite", "FileWritePre", "FileAppendPre", "FilterWritePre"}
+for _, event in pairs(events) do
+    vim.api.nvim_create_autocmd(event, {
+        pattern = { "*config.lua", "*init.vim" },
+        group = vim_conf_group,
+        callback = function ()
+            vim.schedule(function ()
+                package.loaded["user/config"] = nil
+                vim.cmd(":source $MYVIMRC")
+                print("Loaded config files for vim")
+            end)
+        end
 
-})
+    })
+end
+
+local trim_whitespace_group = vim.api.nvim_create_augroup("TrimWhiteSpaceGroup", {clear=true})
+local events = {"BufWritePre", "FileWritePre", "FileAppendPre", "FilterWritePre"}
+for _, event in pairs(events) do
+    vim.api.nvim_create_autocmd(event, {
+        pattern = "*",
+        group = trim_whitespace_group,
+        callback = function ()
+            vim.schedule(function ()
+                vim.cmd(":%s/\\s*$//e|''")
+                vim.cmd(":noh")
+            end)
+        end
+    })
+end
 
 -- Vimrc settings
 map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
@@ -160,9 +180,6 @@ map("n", "<leader>vl", "<cmd>split ~/.config/nvim/lua/user/config.lua<CR>", {sil
 map("n", "<leader>vlo", "<cmd>edit ~/.config/nvim/lua/user/config.lua<CR>", {silent=true})
 map("n", "<leader>vo", "<cmd>edit $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vs", "<cmd>lua package.loaded[\"user/config\"]=nil<CR><cmd>source $MYVIMRC<CR>", {silent=true})
-
-            package.loaded["user/config"] = nil
--- map("n", "<leader>vs", "<cmd>source $MYVIMRC<CR>", {silent=true})
 
 -- Telescope
 local telescope = require'telescope'
@@ -200,6 +217,7 @@ map("n", "<leader>gp", "<cmd>Git push<CR>")
 map("n", "<leader>gg", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gs", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gc", "<cmd>Git commit<CR>", {silent=true})
+map("n", "<leader>gca", "<cmd>Git commit --amend<CR>", {silent=true})
 map("n", "<leader>gf", "<cmd>Git fetch<CR>", {silent=true})
 map("n", "<leader>gr", "<cmd>Git reset --hard")
 map("n", "<leader>go", "<cmd>Git checkout<space>")
@@ -230,6 +248,22 @@ wk.register({
     q = "Find Quickfix",
     k = "Find Keymaps",
     r = "Find Registers",
+  },
+  s = {
+      name = "session",
+      s = "Save Session",
+      c = "Save and Close Session",
+  },
+  t = {
+      name = "terminal",
+      t = "Toggle terminal",
+      n = "Create new terminal",
+  },
+  h = {
+    name = "harpoon",
+    a = "Add harpoon mark",
+    h = "Toggle harpoon quick menu",
+    t = "Toggle harpoon quick menu",
   },
 }, { prefix = "<leader>" })
 
@@ -274,12 +308,12 @@ map("n", "gy", "<Plug>(coc-type-definition)", {silent=true, noremap=false})
 map("n", "gi", "<Plug>(coc-implementation)", {silent=true, noremap=false})
 map("n", "gr", "<Plug>(coc-references)", {silent=true, noremap=false})
 map("n", "K", "<cmd>call ShowDocumentation()<CR>", { silent=true })
--- Symbol renaming.
+    -- Symbol renaming.
 map("n", "<leader>rn", "<Plug>(coc-rename)", { silent=true, noremap=false })
 
 
--- Map function and class text objects
--- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+    -- Map function and class text objects
+    -- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
 map("x", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
 map("o", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
 map("x", "af", "<Plug>(coc-funcobj-a)", { noremap=false })
@@ -289,19 +323,37 @@ map("o", "ic", "<Plug>(coc-classobj-i)", { noremap=false })
 map("x", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
 map("o", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
 
--- CoC pydocstring
+    -- CoC pydocstring
 map("n", "ga", "<Plug>(coc-codeaction-line)", { silent=true })
 map("x", "ga", "<Plug>(coc-codeaction-selected)", { silent=true })
 map("n", "gA", "<Plug>(coc-codeaction)", { silent=true })
 
--- Coc explorer
+    -- Coc explorer
 map("n", "<leader>e", "<cmd>CocCommand explorer<CR>")
 
--- Coc snippets
+    -- Coc snippets
 map("n", "<leader>cs", "<cmd>CocCommand snippets.editSnippets<CR>")
 
+-- TODO: update to use lua
+vim.cmd([[
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+augroup highlightUsages
+    autocmd!
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+augroup END
+]])
 
--- Coc markdown preview
+    -- Coc markdown preview
 map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
 -- Netrw for browser
@@ -333,6 +385,21 @@ vim.g.startify_change_to_vcs_root = 1
 -- Dispatch
 map("n", "<leader>d", "<cmd>Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
+local dispatch_map = {
+    java = "mvn test",
+    python = "pytest",
+    javascript = "npm test",
+}
+local dispatch_group = vim.api.nvim_create_augroup("DispatchGroup", {clear=true})
+for language, command in pairs(dispatch_map) do
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = {language},
+        group = dispatch_group,
+        callback = function ()
+            vim.b.dispatch = command
+        end
+    })
+end
 
 -- Autopairs
 local npairs = require("nvim-autopairs")
@@ -397,6 +464,10 @@ dap.configurations.javascript = {
 }
 
 -- Bufferline
-require('bufferline').setup({diagnostics = "coc"})
-map("n", "H", ":BufferLineCyclePrev<CR>", {silent=true})
-map("n", "L", ":BufferLineCycleNext<CR>", {silent=true})
+-- require('bufferline').setup({diagnostics = "coc"})
+-- map("n", "H", ":BufferLineCyclePrev<CR>", {silent=true})
+-- map("n", "L", ":BufferLineCycleNext<CR>", {silent=true})
+
+-- Airline
+vim.g["airline#extensions#tabline#enabled"] = true -- Enable bufferline
+vim.g["airline#extensions#tabline#formatter"] = "unique_tail"
