@@ -1,17 +1,20 @@
 local vim = vim -- Only show error 'Undefined global vim' on this top line
 -- TODO: migrate to packer https://github.com/wbthomason/packer.nvim
--- for profiling and speedups - https://github.com/lewis6991/impatient.nvim
+-- for profiling and speedups - Plug https://github.com/lewis6991/impatient.nvim
 vim.call('plug#begin')
 local Plug = vim.fn['plug#']
 -- Use 'gx' to go to the github links
--- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard
--- https://github.com/unblevable/quick-scope
--- https://github.com/ervandew/supertab -- Overload tab to cycle through autocomplete
--- https://github.com/NMAC427/guess-indent.nvim -- For determining tab style for file
--- https://github.com/PeterRincker/vim-argumentative -- For manipulating function arguments such as swapping position
--- https://github.com/L3MON4D3/LuaSnip -- Advanced snippet program
+-- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard -- Missing multiple sessions easy open
+Plug 'https://github.com/unblevable/quick-scope'
+-- Plug 'https://github.com/ervandew/supertab' -- Overload tab to cycle through autocomplete
+-- Plug 'https://github.com/NMAC427/guess-indent.nvim' -- For determining tab style for file
+-- Plug 'https://github.com/PeterRincker/vim-argumentative' -- For manipulating function arguments such as swapping position
+-- Plug 'https://github.com/L3MON4D3/LuaSnip' -- Advanced snippet program
 -- If want more in-depth changing of buffers/tabs line
 -- Plug 'https://github.com/akinsho/bufferline.nvim' -- Shows buffers as tabs in line like VSCode
+Plug 'https://github.com/nvim-treesitter/nvim-treesitter'
+Plug 'https://github.com/wellle/targets.vim' -- Add new text objects such as din{ to find next instance of {} and to delete everything inside
+Plug 'https://github.com/justinmk/vim-sneak' -- Sneak command to do f but with 2 chars
 Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
 Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
 Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
@@ -19,12 +22,11 @@ Plug 'https://github.com/vim-airline/vim-airline' -- Status bar
 Plug 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
 Plug 'https://github.com/windwp/nvim-autopairs' -- Auto open and close pairs
 Plug 'https://github.com/folke/which-key.nvim' -- Show options for keybindings when in progress
--- Plug 'https://github.com/liuchengxu/vim-which-key'
 Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
 Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
 Plug 'https://github.com/tpope/vim-repeat' -- Allow plugins to work with dot command
 Plug 'https://github.com/tpope/vim-surround' -- Surrounding ysw)
--- https://github.com/numToStr/Comment.nvim -- Alternative powerful commenter
+-- Plug https://github.com/numToStr/Comment.nvim -- TODO: checkout -- Alternative powerful commenter
 Plug 'https://github.com/tpope/vim-commentary' -- For Commenting gcc & gc
 Plug 'https://github.com/tpope/vim-fugitive' -- Git integration
 Plug 'https://github.com/tpope/vim-projectionist' -- Jump from implementation to test files
@@ -38,7 +40,7 @@ Plug('https://github.com/ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-
 
 -- DAP (Debugger)
 Plug 'https://github.com/mfussenegger/nvim-dap'
--- List of adapters - https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
+-- List of adapters - Plug https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
 Plug 'https://github.com/mfussenegger/nvim-dap-python'
 Plug 'https://github.com/leoluz/nvim-dap-go'
 Plug 'https://github.com/rcarriga/nvim-dap-ui'
@@ -52,11 +54,9 @@ Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
 
 -- CoC
 Plug 'https://github.com/neoclide/coc.nvim'  -- Auto Completion
-Plug('https://github.com/pappasam/coc-jedi', { ['do'] = 'yarn install --frozen-lockfile && yarn build', branch = 'main' })
-Plug('https://github.com/yaegassy/coc-pydocstring', {['do'] = 'yarn install --frozen-lockfile'})
 
 Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
--- TODO: https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
+-- TODO: Plug https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
 
 vim.call('plug#end')
 
@@ -78,43 +78,42 @@ vim.g.maplocalleader = "-"
 vim.g.pymode_python = "python3" -- Using python3
 
 -- Setting options
-vim.o.number = true -- show number instead of 0 line number
-vim.o.relativenumber = true -- use relative line numbers
-vim.o.tabstop = 4 -- tabs to use 4 spaces
-vim.o.softtabstop = 4 -- tabs to use 4 spaces
-vim.o.shiftwidth = 4 -- > to use 4 spaces
-vim.o.expandtab = true -- expand tabs to spaces
+vim.opt.number = true -- show number instead of 0 line number
+vim.opt.relativenumber = true -- use relative line numbers
+vim.opt.tabstop = 4 -- tabs to use 4 spaces
+vim.opt.softtabstop = 4 -- tabs to use 4 spaces
+vim.opt.shiftwidth = 4 -- > to use 4 spaces
+vim.opt.expandtab = true -- expand tabs to spaces
 
-vim.o.cursorline = true -- show cursorline for which line currently on
+vim.opt.cursorline = true -- show cursorline for which line currently on
 
-vim.o.lazyredraw = true -- don't redraw screen when executing things like macros
-vim.o.backup = false
-vim.o.writebackup = false
+vim.opt.lazyredraw = true -- don't redraw screen when executing things like macros
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
 
-vim.o.ignorecase = true
-vim.o.smartcase = true -- only care about case if searching with at least one upper
-vim.o.incsearch = true
-vim.o.showmatch = true
-vim.o.hlsearch = true
+vim.opt.ignorecase = true
+vim.opt.smartcase = true -- only care about case if searching with at least one upper
+vim.opt.showmatch = true
 
-vim.o.mouse="a" -- allow mouse usage
+vim.opt.mouse="a" -- allow mouse usage
 
-vim.o.clipboard="unnamedplus" -- connect windows and linux clipboards
+vim.opt.clipboard="unnamedplus" -- connect windows and linux clipboards
 
-vim.o.autoread = true -- auto update file is changed outside of nvim
+vim.opt.autoread = true -- auto update file is changed outside of nvim
 
-vim.o.magic = true -- magic search
+vim.opt.magic = true -- magic search
 
--- vim.o.path = vim.o.path .. "**"
 vim.opt.path:append("**")
 
-vim.o.smartindent = true -- smart indent when already on new line
+vim.opt.smartindent = true -- smart indent when already on new line
 
-vim.o.list = true -- show tabs, nbsp, and trailing spaces
-vim.o.listchars = "trail:~,extends:>" -- Show trailing spaces as specific chars
+vim.opt.list = true -- show tabs, nbsp, and trailing spaces
+vim.opt.listchars = "trail:~,extends:>,tab:>-" -- Show trailing spaces as specific chars
 
-vim.o.scrolloff=5 -- set option to give 5 lines of buffer above and below for scrolling
-
+vim.opt.scrolloff=5 -- set option to give 5 lines of buffer above and below for scrolling
+vim.opt.gdefault = true -- auto add g flag to substitute all matches on line rather than just first
+vim.opt.wrap = false -- don't wrap long text
 vim.opt.laststatus=3
 
 vim.api.nvim_command([[
@@ -124,9 +123,7 @@ colorscheme gruvbox
 
 -- Mappings
 map("i", "jk", "<esc>")
-map("i", "kj", "<esc>")
 -- map("n", "<CR>", "o<esc>")
-map("n", "Y", "y$")
 map("n", "<BS>", "hx")
 map("n", "<leader>w", "<cmd>w<CR>")
 map("n", "<leader>wq", "<cmd>wq<CR>")
@@ -134,7 +131,7 @@ map("n", "<leader>q", "<cmd>q<CR>")
 map("n", "Q", "<NOP>") -- Don't need Ex mode
 map("n", "H", "<cmd>bprevious<CR>") -- Easier switching between buffers
 map("n", "L", "<cmd>bnext<CR>") -- Easier switching between buffers
-map("n", "<leader>bd", "<cmd>bdelete<CR>") -- Easy delete buffer
+map("n", "<leader>bd", "<cmd>w<CR><cmd>bdelete!<CR>") -- Easy delete buffer
 map("n", "<leader>h", "<cmd>noh<CR>") -- Quick noh
 map("", "<C-h>", "<C-w>h")
 map("", "<C-j>", "<C-w>j")
@@ -165,13 +162,29 @@ for _, event in pairs(events) do
         pattern = "*",
         group = trim_whitespace_group,
         callback = function ()
-            vim.schedule(function ()
+            -- Hope this still works otherwise it will trim whitespace after save
+            -- vim.schedule(function ()
                 vim.cmd(":%s/\\s*$//e|''")
                 vim.cmd(":noh")
-            end)
+            -- end)
         end
     })
 end
+
+
+local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
+vim.api.nvim_create_autocmd({"FileType"}, {
+    pattern = { "javascript", "typescript" },
+    group = js_file_group,
+    callback = function ()
+        vim.schedule(function ()
+            vim.bo.tabstop = 2
+            vim.bo.softtabstop = 2
+            vim.bo.shiftwidth = 2
+            print("Loaded custom tab settings for buffer")
+        end)
+    end
+})
 
 -- Vimrc settings
 map("n", "<leader>v", "<cmd>split $MYVIMRC<CR>", {silent=true})
@@ -206,8 +219,8 @@ require('gitsigns').setup({
         localmap('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
     end
 })
-map('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
-map('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
+-- map('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
+-- map('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
 
 -- Fugitive
 map("n", "<leader>gp", "<cmd>Git push<CR>")
@@ -216,10 +229,10 @@ map("n", "<leader>gs", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gc", "<cmd>Git commit<CR>", {silent=true})
 map("n", "<leader>gcc", "<cmd>Git commit<CR>", {silent=true})
 map("n", "<leader>gca", "<cmd>Git commit --amend<CR>", {silent=true})
-map("n", "<leader>gf", "<cmd>Git fetch<CR>", {silent=true})
-map("n", "<leader>gr", "<cmd>Git reset --hard")
-map("n", "<leader>go", "<cmd>Git checkout<space>")
-map("n", "<leader>ga", "<cmd>Git add<space>")
+map("n", "<leader>gf", "<cmd>Git fetch --prune<CR>", {silent=true})
+map("n", "<leader>gr", ":Git reset --hard")
+map("n", "<leader>go", ":Git checkout<space>")
+map("n", "<leader>ga", ":Git add<space>")
 
 -- Projectionist
 map("n", "<leader>a", "<cmd>A<CR>", {silent=true})
@@ -237,74 +250,74 @@ local wk = require("which-key")
 -- and hide <leader>1
 
 wk.register({
-  f = {
-    name = "file", -- optional group name
-    f = "Find File",
-    b = "Find Buffers",
-    g = "Find with Grep",
-    h = "Find Help Tags",
-    q = "Find Quickfix",
-    k = "Find Keymaps",
-    r = "Find Registers",
-  },
-  s = {
-      name = "session",
-      s = "Save Session",
-      c = "Save and Close Session",
-  },
-  t = {
-      name = "terminal",
-      t = "Toggle terminal",
-      n = "Create new terminal",
-  },
-  h = {
-    name = "harpoon",
-    a = "Add harpoon mark",
-    h = "Toggle harpoon quick menu",
-    t = "Toggle harpoon quick menu",
-  },
-  g = {
-    name = "Git",
-    p = "Git push",
-    g = "Git status",
-    s = "Git status",
-    f = "Git fetch",
-    r = "Git reset --hard",
-    o = "Git checkout",
-    a = "Git add",
-    c = {
-        name = "commit",
-        a = "Git commit --amend",
-        c = "Git commit"
+    f = {
+        name = "file", -- optional group name
+        f = "Find File",
+        b = "Find Buffers",
+        g = "Find with Grep",
+        h = "Find Help Tags",
+        q = "Find Quickfix",
+        k = "Find Keymaps",
+        r = "Find Registers",
     },
-  },
-  r = {
-      name = "rename",
-      n = "rename"
-  },
-  e = "explorer",
-  c = {
-      name = "create",
-      s = "create snippet",
-  },
-  m = "open markdown preview",
-  d = {
-      d = "Run Dispatch",
-      b = "Toggle debug point",
-  },
-  w = {
-      name = "write file",
-      q = "save and quit",
-  },
-  q = "quit file",
-  b = {
-      d = "delete buffer",
-  },
-  v = {
-    name = "vim config",
-    v = "open init.lua in split",
-    o = "open init.lua in curr window",
-  }
+    s = {
+        name = "session",
+        s = "Save Session",
+        c = "Save and Close Session",
+    },
+    t = {
+        name = "terminal",
+        t = "Toggle terminal",
+        n = "Create new terminal",
+    },
+    h = {
+        name = "harpoon",
+        a = "Add harpoon mark",
+        h = "Toggle harpoon quick menu",
+        t = "Toggle harpoon quick menu",
+    },
+    g = {
+        name = "Git",
+        p = "Git push",
+        g = "Git status",
+        s = "Git status",
+        f = "Git fetch",
+        r = "Git reset --hard",
+        o = "Git checkout",
+        a = "Git add",
+        c = {
+            name = "commit",
+            a = "Git commit --amend",
+            c = "Git commit"
+        },
+    },
+    r = {
+        name = "rename",
+        n = "rename"
+    },
+    e = "explorer",
+    c = {
+        name = "create",
+        s = "create snippet",
+    },
+    m = "open markdown preview",
+    d = {
+        d = "Run Dispatch",
+        b = "Toggle debug point",
+    },
+    w = {
+        name = "write file",
+        q = "save and quit",
+    },
+    q = "quit file",
+    b = {
+        d = "delete buffer",
+    },
+    v = {
+        name = "vim config",
+        v = "open init.lua in split",
+        o = "open init.lua in curr window",
+    }
 }, { prefix = "<leader>" })
 
 -- Harpoon
@@ -327,15 +340,15 @@ map("n", "<F8>", "<cmd>TagbarToggle fjc<CR>")
 -- CoC
 vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
 
-vim.o.updatetime=300 -- update stuff only after 300 ms of no typing
+vim.opt.updatetime=300 -- update stuff only after 300 ms of no typing
 
-    -- TODO: Integrate this into the below mapping
-    -- function check_back_space()
-    --     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-    --     local linetext = vim.api.nvim_get_current_line()
-    --     return col == 0 or string.match(linetext:sub(col, col), '%s') ~= nil
-    -- end
-    -- Overload tab to go next/previous on popup menu or next place in snippet
+-- TODO: Integrate this into the below mapping
+-- function check_back_space()
+--     local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+--     local linetext = vim.api.nvim_get_current_line()
+--     return col == 0 or string.match(linetext:sub(col, col), '%s') ~= nil
+-- end
+-- Overload tab to go next/previous on popup menu or next place in snippet
 map("i", "<TAB>", [[ pumvisible() ? "\<C-n>" : coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : CheckBackspace() ? "\<TAB>" : coc#refresh() ]], { silent = true, expr = true })
 -- map("i", "<C-SPACE>", "coc#refresh()", {expr = true})
 map("i", "<S-TAB>", [[pumvisible() ? "\<C-p>" : "\<C-h>"]], {expr = true})
@@ -348,12 +361,12 @@ map("n", "gy", "<Plug>(coc-type-definition)", {silent=true, noremap=false})
 map("n", "gi", "<Plug>(coc-implementation)", {silent=true, noremap=false})
 map("n", "gr", "<Plug>(coc-references)", {silent=true, noremap=false})
 map("n", "K", "<cmd>call ShowDocumentation()<CR>", { silent=true })
-    -- Symbol renaming.
+-- Symbol renaming.
 map("n", "<leader>rn", "<Plug>(coc-rename)", { silent=true, noremap=false })
 
 
-    -- Map function and class text objects
-    -- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+-- Map function and class text objects
+-- NOTE: Requires 'textDocument.documentSymbol' support from the language server.
 map("x", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
 map("o", "if", "<Plug>(coc-funcobj-i)", { noremap=false })
 map("x", "af", "<Plug>(coc-funcobj-a)", { noremap=false })
@@ -363,37 +376,38 @@ map("o", "ic", "<Plug>(coc-classobj-i)", { noremap=false })
 map("x", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
 map("o", "ac", "<Plug>(coc-classobj-a)", { noremap=false })
 
-    -- CoC pydocstring
+-- CoC pydocstring
 map("n", "ga", "<Plug>(coc-codeaction-line)", { silent=true })
 map("x", "ga", "<Plug>(coc-codeaction-selected)", { silent=true })
 map("n", "gA", "<Plug>(coc-codeaction)", { silent=true })
 
-    -- Coc explorer
+-- Coc explorer
 map("n", "<leader>e", "<cmd>CocCommand explorer<CR>")
+map("n", "<leader>ef", "<cmd>CocCommand explorer --no-toggle<CR>")
 
-    -- Coc snippets
+-- Coc snippets
 map("n", "<leader>cs", "<cmd>CocCommand snippets.editSnippets<CR>")
 
 -- TODO: update to use lua
 vim.cmd([[
 function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
+    if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+    else
+        call feedkeys('K', 'in')
+    endif
 endfunction
 augroup highlightUsages
-    autocmd!
-    autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd!
+autocmd CursorHold * silent call CocActionAsync('highlight')
 augroup END
 ]])
 
-    -- Coc markdown preview
+-- Coc markdown preview
 map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
 -- Netrw for browser
@@ -408,9 +422,11 @@ map("n", "<leader>sc", "<cmd>SClose<CR>")
 vim.g.startify_bookmarks = {
     {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
     {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
+    {o = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_orch'},
     {n = '~/.config/nvim'},
     {vw = '~/vimwiki/index.md'},
     {s = '~/vimwiki/work/Standup.md'},
+    {p = '~/vimwiki/work/Passwords.md'},
     {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
     {j = '/mnt/c/Users/anthony.buchholz/Projects/jolly-jackalopes'},
 }
@@ -423,7 +439,7 @@ vim.g.startify_lists = {
 vim.g.startify_change_to_vcs_root = 1
 
 -- Dispatch
-map("n", "<leader>d", "<cmd>Dispatch<space>")
+map("n", "<leader>d", ":Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
 local dispatch_map = {
     java = "mvn test",
@@ -448,11 +464,11 @@ npairs.setup({
 })
 _G.MUtils= {}
 MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-    return vim.fn["coc#_select_confirm"]()
-  else
-    return npairs.autopairs_cr()
-  end
+    if vim.fn.pumvisible() ~= 0  then
+        return vim.fn["coc#_select_confirm"]()
+    else
+        return npairs.autopairs_cr()
+    end
 end
 map('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
@@ -469,45 +485,47 @@ require("dap-go").setup()
 dapui.setup()
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
+    dapui.open()
 end
 dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
+    dapui.close()
 end
 dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
+    dapui.close()
 end
-    -- Node JS Setup
+-- Node JS Setup
 dap.adapters.node2 = {
-  type = 'executable',
-  command = 'node',
-  args = {os.getenv('HOME') .. '/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js'},
+    type = 'executable',
+    command = 'node',
+    args = {os.getenv('HOME') .. '/dev/microsoft/vscode-node-debug2/out/src/nodeDebug.js'},
 }
 dap.configurations.javascript = {
-  {
-    name = 'Launch',
-    type = 'node2',
-    request = 'launch',
-    program = '${file}',
-    cwd = vim.fn.getcwd(),
-    sourceMaps = true,
-    protocol = 'inspector',
-    console = 'integratedTerminal',
-  },
-  {
-    -- For this to work you need to make sure the node process is started with the `--inspect` flag.
-    name = 'Attach to process',
-    type = 'node2',
-    request = 'attach',
-    processId = require'dap.utils'.pick_process,
-  },
+    {
+        name = 'Launch',
+        type = 'node2',
+        request = 'launch',
+        program = '${file}',
+        cwd = vim.fn.getcwd(),
+        sourceMaps = true,
+        protocol = 'inspector',
+        console = 'integratedTerminal',
+    },
+    {
+        -- For this to work you need to make sure the node process is started with the `--inspect` flag.
+        name = 'Attach to process',
+        type = 'node2',
+        request = 'attach',
+        processId = require'dap.utils'.pick_process,
+    },
 }
-
--- Bufferline
--- require('bufferline').setup({diagnostics = "coc"})
--- map("n", "H", ":BufferLineCyclePrev<CR>", {silent=true})
--- map("n", "L", ":BufferLineCycleNext<CR>", {silent=true})
 
 -- Airline
 vim.g["airline#extensions#tabline#enabled"] = true -- Enable bufferline
 vim.g["airline#extensions#tabline#formatter"] = "unique_tail"
+
+-- Sneak
+vim.g["sneak#label"] = true -- Make it similar to easymotion after first hit
+
+-- Quickscope
+vim.g.qs_highlight_on_keys = { 'f', 'F', 't', 'T' }
+vim.g.qs_filetype_blacklist = { 'startify' }
