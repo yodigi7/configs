@@ -1,5 +1,6 @@
+require('user.plugins') -- Installs all of the plugins from packer
+require('user.autocmds') -- Setup all autocmds
 local vim = vim -- Only show error 'Undefined global vim' on this top line
-require('plugins') -- Installs all of the plugins from packer
 
 -- Gruvbox
 vim.g.gruvbox_contrast_dark="hard"
@@ -57,14 +58,15 @@ vim.opt.gdefault = true -- auto add g flag to substitute all matches on line rat
 vim.opt.wrap = false -- don't wrap long text
 vim.opt.laststatus=3
 
-vim.api.nvim_command([[
-syntax on
+vim.cmd([[
 colorscheme gruvbox
 ]])
 
+-- Netrw for browser
+vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
+
 -- Mappings
 map("i", "jk", "<esc>")
--- map("n", "<CR>", "o<esc>")
 map("n", "<BS>", "hx")
 map("n", "<leader>w", "<cmd>w<CR>")
 map("n", "<leader>wq", "<cmd>wq<CR>")
@@ -78,64 +80,6 @@ map("", "<C-h>", "<C-w>h")
 map("", "<C-j>", "<C-w>j")
 map("", "<C-k>", "<C-w>k")
 map("", "<C-l>", "<C-w>l")
-
--- Auto source files if saving init.vim or config.lua
-local vim_conf_group = vim.api.nvim_create_augroup("VimConfigGroup", {clear=true})
-local file_update_events = {"BufWrite", "FileWritePre", "FileAppendPre", "FilterWritePre"}
-vim.api.nvim_create_autocmd(file_update_events, {
-    pattern = "init.lua",
-    group = vim_conf_group,
-    callback = function ()
-        vim.schedule(function ()
-            vim.cmd(":source $MYVIMRC")
-            print("Loaded config files for vim")
-        end)
-    end
-})
-vim.api.nvim_create_autocmd(file_update_events, {
-    pattern = "plugins.lua",
-    group = vim_conf_group,
-    callback = function ()
-        vim.schedule(function ()
-            package.loaded["plugins"] = nil -- Unload plugins file to be resourced
-            vim.cmd(":source $MYVIMRC")
-            vim.cmd(":PackerSync") -- Clean and Install new plugins
-            print("Loaded config files for vim")
-        end)
-    end
-})
-
-local trim_whitespace_group = vim.api.nvim_create_augroup("TrimWhiteSpaceGroup", {clear=true})
-for _, event in pairs(file_update_events) do
-    vim.api.nvim_create_autocmd(event, {
-        pattern = "*",
-        group = trim_whitespace_group,
-        callback = function ()
-            -- Hope this still works otherwise it will trim whitespace after save
-            -- vim.schedule(function ()
-                vim.cmd(":%s/\\s*$//e|''")
-                vim.cmd(":noh")
-            -- end)
-        end
-    })
-end
-
--- local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
--- vim.api.nvim_create_autocmd({"FileType"}, {
---     pattern = { "javascript", "typescript" },
---     group = js_file_group,
---     callback = function ()
---         vim.schedule(function ()
---             vim.bo.tabstop = 2
---             vim.bo.softtabstop = 2
---             vim.bo.shiftwidth = 2
---             print("Loaded custom tab settings for buffer")
---         end)
---     end
--- })
-
--- Netrw for browser
-vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
 
 -- Vimrc settings
 map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
@@ -262,7 +206,7 @@ map("n", "<F8>", "<cmd>TagbarToggle fjc<CR>")
 -- CoC
 vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
 
-vim.opt.updatetime=300 -- update stuff only after 300 ms of no typing
+vim.opt.updatetime=300 -- update stuff only after 300 ms of no typing -- maybe only has to do with swap file
 
 -- TODO: Integrate this into the below mapping
 -- function check_back_space()

@@ -1,19 +1,22 @@
 vim = vim -- Gets rid of eroneous warnings in linting
 local programming_languages = {'java', 'python', 'javascript', 'go', 'lua'} -- Add additional coding filetypes here
-return require('packer').startup(function(use)
+require('packer').startup(function(use)
     use 'https://github.com/wbthomason/packer.nvim'
     -- 'gx' to go to the github links
     use {
         'https://github.com/glepnir/dashboard-nvim',
         disable = true,
     } -- Dashboard -- TODO: Missing multiple sessions easy open
+    -- TODO: Check out below
+    -- use 'https://github.com/folke/trouble.nvim' -- Showing pretty list for diagnotics, references, quickfix, locationlists, etc.
+    -- use 'https://github.com/arafatamim/trouble.nvim' -- Fork of above to work with coc
     use {
         'https://github.com/unblevable/quick-scope',
         config = function()
             vim.g.qs_highlight_on_keys = { 'f', 'F', 't', 'T' }
-            vim.g.qs_filetype_blacklist = { 'startify' }
+            vim.g.qs_filetype_blacklist = { 'startify', 'TelescopePrompt', 'TelescopeResults' }
         end
-    }
+    } -- Highlight optimal thing to search
     use {
         'https://github.com/ervandew/supertab', -- Overload tab to cycle through autocomplete
         disable = true,
@@ -23,6 +26,7 @@ return require('packer').startup(function(use)
         disable = true,
     } -- Advanced snippet program
     -- If want more in-depth changing of buffers/tabs line
+    -- TODO: Determine why bug on bufferline is switching when not fully commented out
     use {
         'https://github.com/akinsho/bufferline.nvim',
         disable = true,
@@ -31,13 +35,34 @@ return require('packer').startup(function(use)
         'https://github.com/NMAC427/guess-indent.nvim',
         config = function() require('guess-indent').setup{} end,
     } -- For determining tab style for file
+    -- TODO: Re-enable when fixed: https://github.com/gaelph/logsitter.nvim/issues/4
+    use {
+        "https://github.com/gaelph/logsitter.nvim",
+        requires = {{ "https://github.com/nvim-treesitter/nvim-treesitter" }},
+        config = function()
+            local logsitter = vim.api.nvim_create_augroup("LogSitter", { clear = true })
+            vim.api.nvim_create_autocmd("FileType", {
+                group = logsitter,
+                pattern = "javascript,go,lua",
+                callback = function()
+                    vim.keymap.set("n", "<leader>l", function()
+                        require("logsitter").log()
+                    end)
+                end,
+            })
+        end,
+        disable = true,
+    } -- TurboLog for efficient logging
     use {
         'https://github.com/PeterRincker/vim-argumentative',
         ft = programming_languages,
     } -- For manipulating function arguments such as swapping position
     use { 'https://github.com/nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
     use 'https://github.com/wellle/targets.vim' -- Add new text objects such as din{ to find next instance of {} and to delete everything inside
-    -- TODO: Add back if ; can work with normal f
+    use {
+        'https://github.com/michaeljsmith/vim-indent-object'
+    }
+    -- TODO: Add back if ; can work with normal f: https://github.com/justinmk/vim-sneak/issues/298
     use {
         'https://github.com/justinmk/vim-sneak',
         disable = true,
@@ -47,22 +72,22 @@ return require('packer').startup(function(use)
         'https://github.com/mhinz/vim-startify',
         config = function()
             vim.g.startify_bookmarks = {
-                {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
-                {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
-                {o = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_orch'},
-                {n = '~/.config/nvim'},
+                -- {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
+                -- {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
+                -- {o = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_orch'},
+                -- {n = '~/.config/nvim'},
                 {vw = '~/vimwiki/index.md'},
                 {s = '~/vimwiki/work/Standup.md'},
                 {p = '~/vimwiki/work/Passwords.md'},
-                {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
+                -- {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
                 {j = '/mnt/c/Users/anthony.buchholz/Projects/jolly-jackalopes'},
                 {l = '/mnt/c/Users/anthony.buchholz/EAP-7.2.0/standalone/log/server.log'}
             }
             vim.g.startify_lists = {
                 {type = 'sessions', header ={  '   Sessions' }},
                 {type = 'bookmarks', header ={  '   Bookmarks' }},
-                {type = 'files', header ={  '   MRU' }},
-                {type = 'dir', header = { '   MRU in '  .. vim.fn.getcwd()}},
+                -- {type = 'files', header ={  '   MRU' }},
+                -- {type = 'dir', header = { '   MRU in '  .. vim.fn.getcwd()}},
             }
             vim.g.startify_change_to_vcs_root = 1
         end
