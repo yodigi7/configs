@@ -23,7 +23,7 @@ for map_pattern, map_callback in pairs(vim_config_map) do
     vim.api.nvim_create_autocmd(file_update_events, {
         pattern = map_pattern,
         group = vim_conf_group,
-        callback = function() vim.schedule(map_callback) end
+        callback = function() vim.schedule(map_callback) end,
     })
 end
 
@@ -42,6 +42,12 @@ for _, event in pairs(file_update_events) do
     })
 end
 
+local gitcommit_group = vim.api.nvim_create_augroup("GitCommitGroup", {clear=true})
+vim.api.nvim_create_autocmd({"FileType"}, {
+    pattern = { "gitcommit" },
+    group = gitcommit_group,
+    command = "startinsert"
+})
 -- local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
 -- vim.api.nvim_create_autocmd({"FileType"}, {
 --     pattern = { "javascript", "typescript" },

@@ -38,6 +38,9 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true -- only care about case if searching with at least one upper
 vim.opt.showmatch = true
 
+vim.opt.splitbelow = true -- Splits to the bottom by default on horizontal splits
+vim.opt.splitright = true -- Splits to the right by default on vertical splits
+
 vim.opt.mouse="a" -- allow mouse usage
 
 vim.opt.clipboard="unnamedplus" -- connect windows and linux clipboards
@@ -196,8 +199,9 @@ map("n", "<tab>", require('harpoon.ui').nav_next, {silent=true})
 map("n", "<S-tab>", require('harpoon.ui').nav_prev, {silent=true})
 
 -- Floaterm
-map("n", "<leader>tt", "<cmd>FloatermToggle<CR>", {silent=true})
-map("n", "<leader>tn", "<cmd>FloatermNew<CR>", {silent=true})
+map("n", "<leader>t", "<cmd>FloatermToggle<CR>", {silent=true})
+-- map("n", "<leader>tt", "<cmd>FloatermToggle<CR>", {silent=true})
+-- map("n", "<leader>tn", "<cmd>FloatermNew<CR>", {silent=true})
 map("t", "<esc>", '<C-\\><C-n><cmd>FloatermToggle<CR>', {silent=true})
 
 -- Tagbar
