@@ -1,64 +1,5 @@
 local vim = vim -- Only show error 'Undefined global vim' on this top line
--- TODO: migrate to packer https://github.com/wbthomason/packer.nvim
--- for profiling and speedups - Plug https://github.com/lewis6991/impatient.nvim
-vim.call('plug#begin')
-local Plug = vim.fn['plug#']
--- Use 'gx' to go to the github links
--- Plug 'https://github.com/glepnir/dashboard-nvim' -- Dashboard -- Missing multiple sessions easy open
-Plug 'https://github.com/unblevable/quick-scope'
--- Plug 'https://github.com/ervandew/supertab' -- Overload tab to cycle through autocomplete
--- Plug 'https://github.com/NMAC427/guess-indent.nvim' -- For determining tab style for file
--- Plug 'https://github.com/PeterRincker/vim-argumentative' -- For manipulating function arguments such as swapping position
--- Plug 'https://github.com/L3MON4D3/LuaSnip' -- Advanced snippet program
--- If want more in-depth changing of buffers/tabs line
--- Plug 'https://github.com/akinsho/bufferline.nvim' -- Shows buffers as tabs in line like VSCode
-Plug 'https://github.com/nvim-treesitter/nvim-treesitter'
-Plug 'https://github.com/wellle/targets.vim' -- Add new text objects such as din{ to find next instance of {} and to delete everything inside
-Plug 'https://github.com/justinmk/vim-sneak' -- Sneak command to do f but with 2 chars
-Plug 'https://github.com/mhinz/vim-startify' -- Alt dashboard
-Plug 'https://github.com/honza/vim-snippets' -- General list of snippets
-Plug 'https://github.com/morhetz/gruvbox' -- Gruvbox color scheme
-Plug 'https://github.com/vim-airline/vim-airline' -- Status bar
-Plug 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
-Plug 'https://github.com/windwp/nvim-autopairs' -- Auto open and close pairs
-Plug 'https://github.com/folke/which-key.nvim' -- Show options for keybindings when in progress
-Plug 'https://github.com/lewis6991/gitsigns.nvim' -- Basic additional Git integration with sidebar
-Plug 'https://github.com/vimwiki/vimwiki' -- Vim wiki
-Plug 'https://github.com/tpope/vim-repeat' -- Allow plugins to work with dot command
-Plug 'https://github.com/tpope/vim-surround' -- Surrounding ysw)
--- Plug https://github.com/numToStr/Comment.nvim -- TODO: checkout -- Alternative powerful commenter
-Plug 'https://github.com/tpope/vim-commentary' -- For Commenting gcc & gc
-Plug 'https://github.com/tpope/vim-fugitive' -- Git integration
-Plug 'https://github.com/tpope/vim-projectionist' -- Jump from implementation to test files
-Plug 'https://github.com/tpope/vim-dispatch' -- Dispatch built/test/etc jobs to async terminal
-
-Plug 'https://github.com/kana/vim-textobj-entire' -- Around everything
-Plug 'https://github.com/kana/vim-textobj-user' -- Requirement for around everything
-
-Plug 'https://github.com/preservim/tagbar' -- Tagbar for code navigation
-Plug('https://github.com/ternjs/tern_for_vim', {['do'] = 'yarn install --frozen-lockfile'}) -- Requirement for Tagbar
-
--- DAP (Debugger)
-Plug 'https://github.com/mfussenegger/nvim-dap'
--- List of adapters - Plug https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
-Plug 'https://github.com/mfussenegger/nvim-dap-python'
-Plug 'https://github.com/leoluz/nvim-dap-go'
-Plug 'https://github.com/rcarriga/nvim-dap-ui'
-Plug 'https://github.com/theHamsta/nvim-dap-virtual-text'
-
--- Telescope
-Plug 'https://github.com/nvim-lua/plenary.nvim' -- General utils for a lot of plug-ins
-Plug('https://github.com/nvim-telescope/telescope.nvim', { tag = 'nvim-0.6' })
-
-Plug 'https://github.com/ThePrimeagen/harpoon' --Harpoon
-
--- CoC
-Plug 'https://github.com/neoclide/coc.nvim'  -- Auto Completion
-
-Plug 'https://github.com/voldikss/vim-floaterm' -- Floating terminal for reuse
--- TODO: Plug https://github.com/numToStr/FTerm.nvim -- Floating terminal for nvim
-
-vim.call('plug#end')
+require('plugins') -- Installs all of the plugins from packer
 
 -- Gruvbox
 vim.g.gruvbox_contrast_dark="hard"
@@ -70,7 +11,7 @@ local function map(mode, lhs, rhs, opts)
     if opts then
         options = vim.tbl_extend("force", options, opts)
     end
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+    vim.keymap.set(mode, lhs, rhs, options)
 end
 
 vim.g.mapleader = " "
@@ -140,24 +81,32 @@ map("", "<C-l>", "<C-w>l")
 
 -- Auto source files if saving init.vim or config.lua
 local vim_conf_group = vim.api.nvim_create_augroup("VimConfigGroup", {clear=true})
-local events = {"BufWrite", "FileWritePre", "FileAppendPre", "FilterWritePre"}
-for _, event in pairs(events) do
-    vim.api.nvim_create_autocmd(event, {
-        pattern = "init.lua",
-        group = vim_conf_group,
-        callback = function ()
-            vim.schedule(function ()
-                vim.cmd(":source $MYVIMRC")
-                print("Loaded config files for vim")
-            end)
-        end
-
-    })
-end
+local file_update_events = {"BufWrite", "FileWritePre", "FileAppendPre", "FilterWritePre"}
+vim.api.nvim_create_autocmd(file_update_events, {
+    pattern = "init.lua",
+    group = vim_conf_group,
+    callback = function ()
+        vim.schedule(function ()
+            vim.cmd(":source $MYVIMRC")
+            print("Loaded config files for vim")
+        end)
+    end
+})
+vim.api.nvim_create_autocmd(file_update_events, {
+    pattern = "plugins.lua",
+    group = vim_conf_group,
+    callback = function ()
+        vim.schedule(function ()
+            package.loaded["plugins"] = nil -- Unload plugins file to be resourced
+            vim.cmd(":source $MYVIMRC")
+            vim.cmd(":PackerSync") -- Clean and Install new plugins
+            print("Loaded config files for vim")
+        end)
+    end
+})
 
 local trim_whitespace_group = vim.api.nvim_create_augroup("TrimWhiteSpaceGroup", {clear=true})
-local events = {"BufWritePre", "FileWritePre", "FileAppendPre", "FilterWritePre"}
-for _, event in pairs(events) do
+for _, event in pairs(file_update_events) do
     vim.api.nvim_create_autocmd(event, {
         pattern = "*",
         group = trim_whitespace_group,
@@ -171,56 +120,41 @@ for _, event in pairs(events) do
     })
 end
 
+-- local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
+-- vim.api.nvim_create_autocmd({"FileType"}, {
+--     pattern = { "javascript", "typescript" },
+--     group = js_file_group,
+--     callback = function ()
+--         vim.schedule(function ()
+--             vim.bo.tabstop = 2
+--             vim.bo.softtabstop = 2
+--             vim.bo.shiftwidth = 2
+--             print("Loaded custom tab settings for buffer")
+--         end)
+--     end
+-- })
 
-local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
-vim.api.nvim_create_autocmd({"FileType"}, {
-    pattern = { "javascript", "typescript" },
-    group = js_file_group,
-    callback = function ()
-        vim.schedule(function ()
-            vim.bo.tabstop = 2
-            vim.bo.softtabstop = 2
-            vim.bo.shiftwidth = 2
-            print("Loaded custom tab settings for buffer")
-        end)
-    end
-})
+-- Netrw for browser
+vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
 
 -- Vimrc settings
-map("n", "<leader>v", "<cmd>split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vv", "<cmd>split $MYVIMRC<CR>", {silent=true})
 map("n", "<leader>vo", "<cmd>edit $MYVIMRC<CR>", {silent=true})
+map("n", "<leader>vp", "<cmd>split ~/.config/nvim/lua/plugins.lua<CR>", {silent=true})
+map("n", "<leader>vs", "<cmd>PackerSync<CR>", {silent=true})
+map("n", "<leader>vc", "<cmd>PackerClean<CR>", {silent=true})
 
 -- Telescope
-local telescope = require'telescope'
-map("n", "<leader>ff", "<cmd>Telescope find_files<CR>", {silent=true})
-map("n", "<leader>fb", "<cmd>Telescope buffers<CR>", {silent=true})
-map("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", {silent=true})
-map("n", "<leader>fh", "<cmd>Telescope help_tags<CR>", {silent=true})
-map("n", "<leader>fr", "<cmd>lua<space>require'telescope.builtin'.registers{}<CR>", {silent=true})
-map("n", "<leader>fk", "<cmd>lua<space>require'telescope.builtin'.keymaps{}<CR>", {silent=true})
-map("n", "<leader>fq", "<cmd>lua<space>require'telescope.builtin'.quickfix{}<CR>", {silent=true})
-map("n", "<leader>fgs", "<cmd>lua<space>require'telescope.builtin'.git_status{}<CR>", {silent=true})
-map("n", "<leader>fgc", "<cmd>lua<space>require'telescope.builtin'.git_commits{}<CR>", {silent=true})
-map("n", "<leader>fgb", "<cmd>lua<space>require'telescope.builtin'.git_branches{}<CR>", {silent=true})
-
--- Gitsigns
-require('gitsigns').setup({
-    current_line_blame = true,
-    numhl = true,
-
-    on_attach = function(bufnr)
-        local function localmap(mode, lhs, rhs, opts)
-            opts = vim.tbl_extend('force', {noremap = true, silent = true}, opts or {})
-            vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
-        end
-
-        localmap('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
-        localmap('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
-    end
-})
--- map('n', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
--- map('v', '<leader>gh', '<cmd>Gitsigns stage_hunk<CR>')
+map("n", "<leader>ff", require'telescope.builtin'.find_files, {silent=true})
+map("n", "<leader>fb", require'telescope.builtin'.buffers, {silent=true})
+map("n", "<leader>fg", require'telescope.builtin'.live_grep, {silent=true})
+map("n", "<leader>fh", require'telescope.builtin'.help_tags, {silent=true})
+map("n", "<leader>fr", require'telescope.builtin'.registers, {silent=true})
+map("n", "<leader>fk", require'telescope.builtin'.keymaps, {silent=true})
+map("n", "<leader>fq", require'telescope.builtin'.quickfix, {silent=true})
+map("n", "<leader>fgs", require'telescope.builtin'.git_status, {silent=true})
+map("n", "<leader>fgc", require'telescope.builtin'.git_commits, {silent=true})
+map("n", "<leader>fgb", require'telescope.builtin'.git_branches, {silent=true})
 
 -- Fugitive
 map("n", "<leader>gp", "<cmd>Git push<CR>")
@@ -238,18 +172,7 @@ map("n", "<leader>ga", ":Git add<space>")
 map("n", "<leader>a", "<cmd>A<CR>", {silent=true})
 
 -- Which key
--- map("n", "<leader>", "<cmd>WhichKey '<Space>'<CR>", {silent = true})
-local wk = require("which-key")
--- As an example, we will create the following mappings:
---  * <leader>ff find files
---  * <leader>fr show recent files
---  * <leader>fb Foobar
--- we'll document:
---  * <leader>fn new file
---  * <leader>fe edit file
--- and hide <leader>1
-
-wk.register({
+require("which-key").register({
     f = {
         name = "file", -- optional group name
         f = "Find File",
@@ -264,6 +187,7 @@ wk.register({
         name = "session",
         s = "Save Session",
         c = "Save and Close Session",
+        d = "Delete Session",
     },
     t = {
         name = "terminal",
@@ -321,18 +245,16 @@ wk.register({
 }, { prefix = "<leader>" })
 
 -- Harpoon
-map("n", "<leader>ha", "<cmd>lua require('harpoon.mark').add_file()<CR>")
-map("n", "<leader>hh", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
-map("n", "<leader>ht", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", {silent=true})
-map("n", "<tab>", "<cmd>lua require('harpoon.ui').nav_next()<CR>", {silent=true})
-map("n", "<S-tab>", "<cmd>lua require('qharpoon.ui').nav_prev()<CR>", {silent=true})
+map("n", "<leader>ha", require('harpoon.mark').add_file)
+map("n", "<leader>hh", require('harpoon.ui').toggle_quick_menu, {silent=true})
+map("n", "<leader>ht", require('harpoon.ui').toggle_quick_menu, {silent=true})
+map("n", "<tab>", require('harpoon.ui').nav_next, {silent=true})
+map("n", "<S-tab>", require('harpoon.ui').nav_prev, {silent=true})
 
 -- Floaterm
 map("n", "<leader>tt", "<cmd>FloatermToggle<CR>", {silent=true})
 map("n", "<leader>tn", "<cmd>FloatermNew<CR>", {silent=true})
 map("t", "<esc>", '<C-\\><C-n><cmd>FloatermToggle<CR>', {silent=true})
-vim.g.floaterm_width = 0.9
-vim.g.floaterm_height = 0.9
 
 -- Tagbar
 map("n", "<F8>", "<cmd>TagbarToggle fjc<CR>")
@@ -410,75 +332,25 @@ augroup END
 -- Coc markdown preview
 map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
--- Netrw for browser
-vim.g.netrw_browsex_viewer="cmd.exe /C start" -- can now press 'gx' on link and will open in windows browser tab, for wsl
-
--- Vim wiki
-vim.g.vimwiki_list = {{syntax = 'markdown', ext = '.md'}}
-
 -- Startify
 map("n", "<leader>ss", "<cmd>SSave<CR>")
 map("n", "<leader>sc", "<cmd>SClose<CR>")
-vim.g.startify_bookmarks = {
-    {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
-    {b = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_batch'},
-    {o = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_orch'},
-    {n = '~/.config/nvim'},
-    {vw = '~/vimwiki/index.md'},
-    {s = '~/vimwiki/work/Standup.md'},
-    {p = '~/vimwiki/work/Passwords.md'},
-    {k = '/mnt/c/Users/anthony.buchholz/Projects/kattis'},
-    {j = '/mnt/c/Users/anthony.buchholz/Projects/jolly-jackalopes'},
-}
-vim.g.startify_lists = {
-    {type = 'sessions', header ={  '   Sessions' }},
-    {type = 'bookmarks', header ={  '   Bookmarks' }},
-    {type = 'files', header ={  '   MRU' }},
-    {type = 'dir', header = { '   MRU in '  .. vim.fn.getcwd()}},
-}
-vim.g.startify_change_to_vcs_root = 1
+map("n", "<leader>sd", "<cmd>SDelete<CR>")
 
 -- Dispatch
 map("n", "<leader>d", ":Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
-local dispatch_map = {
-    java = "mvn test",
-    python = "pytest",
-    javascript = "npm test",
-}
-local dispatch_group = vim.api.nvim_create_augroup("DispatchGroup", {clear=true})
-for language, command in pairs(dispatch_map) do
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = {language},
-        group = dispatch_group,
-        callback = function ()
-            vim.b.dispatch = command
-        end
-    })
-end
 
 -- Autopairs
-local npairs = require("nvim-autopairs")
-npairs.setup({
-    map_cr = false
-})
-_G.MUtils= {}
-MUtils.completion_confirm=function()
-    if vim.fn.pumvisible() ~= 0  then
-        return vim.fn["coc#_select_confirm"]()
-    else
-        return npairs.autopairs_cr()
-    end
-end
 map('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- DAP - Debugger
-map("n", "<leader>db", "<cmd>lua require('dap').toggle_breakpoint()<CR>", {silent=true})
-map("n", "<F1>", "<cmd>lua require('dap').continue()<CR>", {silent=true})
-map("n", "<F2>", "<cmd>lua require('dap').step_out()<CR>", {silent=true})
-map("n", "<F3>", "<cmd>lua require('dap').step_over()<CR>", {silent=true})
-map("n", "<F4>", "<cmd>lua require('dap').step_into()<CR>", {silent=true})
-map("n", "<F5>", "<cmd>lua require('dapui').toggle()<CR>", {silent=true})
+map("n", "<leader>db", require('dap').toggle_breakpoint, {silent=true})
+map("n", "<F1>", require('dap').continue, {silent=true})
+map("n", "<F2>", require('dap').step_out, {silent=true})
+map("n", "<F3>", require('dap').step_over, {silent=true})
+map("n", "<F4>", require('dap').step_into, {silent=true})
+map("n", "<F5>", require('dapui').toggle, {silent=true})
 
 local dap, dapui = require("dap"), require("dapui")
 require("dap-go").setup()
@@ -518,14 +390,3 @@ dap.configurations.javascript = {
         processId = require'dap.utils'.pick_process,
     },
 }
-
--- Airline
-vim.g["airline#extensions#tabline#enabled"] = true -- Enable bufferline
-vim.g["airline#extensions#tabline#formatter"] = "unique_tail"
-
--- Sneak
-vim.g["sneak#label"] = true -- Make it similar to easymotion after first hit
-
--- Quickscope
-vim.g.qs_highlight_on_keys = { 'f', 'F', 't', 'T' }
-vim.g.qs_filetype_blacklist = { 'startify' }
