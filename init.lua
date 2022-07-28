@@ -61,6 +61,9 @@ vim.opt.gdefault = true -- auto add g flag to substitute all matches on line rat
 vim.opt.wrap = false -- don't wrap long text
 vim.opt.laststatus=3
 
+vim.opt.foldmethod = "indent" -- Fold on indents
+vim.opt.foldenable = false -- Don't start with folds when first open
+
 vim.cmd([[
 colorscheme gruvbox
 ]])
@@ -162,10 +165,7 @@ require("which-key").register({
             c = "Git commit"
         },
     },
-    r = {
-        name = "rename",
-        n = "rename"
-    },
+    r = "rename",
     e = "explorer",
     c = {
         name = "create",
@@ -188,7 +188,10 @@ require("which-key").register({
         name = "vim config",
         v = "open init.lua in split",
         o = "open init.lua in curr window",
-    }
+    },
+    l = "add turbo log",
+    [";"] = "sneak next",
+    [","] = "sneak prev",
 }, { prefix = "<leader>" })
 
 -- Harpoon
@@ -232,7 +235,7 @@ map("n", "gi", "<Plug>(coc-implementation)", {silent=true, noremap=false})
 map("n", "gr", "<Plug>(coc-references)", {silent=true, noremap=false})
 map("n", "K", "<cmd>call ShowDocumentation()<CR>", { silent=true })
 -- Symbol renaming.
-map("n", "<leader>rn", "<Plug>(coc-rename)", { silent=true, noremap=false })
+map("n", "<leader>r", "<Plug>(coc-rename)", { silent=true, noremap=false })
 
 
 -- Map function and class text objects

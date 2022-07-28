@@ -35,7 +35,6 @@ require('packer').startup(function(use)
         'https://github.com/NMAC427/guess-indent.nvim',
         config = function() require('guess-indent').setup{} end,
     } -- For determining tab style for file
-    -- TODO: Re-enable when fixed: https://github.com/gaelph/logsitter.nvim/issues/4
     use {
         "https://github.com/gaelph/logsitter.nvim",
         requires = {{ "https://github.com/nvim-treesitter/nvim-treesitter" }},
@@ -47,11 +46,11 @@ require('packer').startup(function(use)
                 callback = function()
                     vim.keymap.set("n", "<leader>l", function()
                         require("logsitter").log()
-                    end)
+                    end,
+                    {buffer = 0})
                 end,
             })
         end,
-        disable = true,
     } -- TurboLog for efficient logging
     use {
         'https://github.com/PeterRincker/vim-argumentative',
@@ -62,12 +61,16 @@ require('packer').startup(function(use)
     use {
         'https://github.com/michaeljsmith/vim-indent-object'
     }
-    -- TODO: Add back if ; can work with normal f: https://github.com/justinmk/vim-sneak/issues/298
+    -- TODO: check in with overloading leader key feature request: https://github.com/justinmk/vim-sneak/issues/298
     use {
         'https://github.com/justinmk/vim-sneak',
-        disable = true,
-        config = "vim.g['sneak#label'] = true", -- Make it similar to easymotion after first hit
-    } -- Sneak command to do f but with 2 chars
+        -- disable = true,
+        config = function()
+            vim.g['sneak#label'] = true
+            vim.keymap.set("n", "<leader>;", "<Plug>Sneak_;", {noremap=false})
+            vim.keymap.set("n", "<leader>,", "<Plug>Sneak_,", {noremap=false})
+        end -- Make it similar to easymotion after first hit
+    } -- Sneak command to do f but with 2 chars and multiline
     use {
         'https://github.com/mhinz/vim-startify',
         config = function()
