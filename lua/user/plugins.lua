@@ -2,6 +2,22 @@ vim = vim -- Gets rid of eroneous warnings in linting
 local programming_languages = {'java', 'python', 'javascript', 'go', 'lua'} -- Add additional coding filetypes here
 require('packer').startup(function(use)
     use 'https://github.com/wbthomason/packer.nvim'
+    use {
+        'https://github.com/nvim-treesitter/nvim-treesitter',
+        run = ':TSUpdate',
+        config = function ()
+            require'nvim-treesitter.configs'.setup{
+                ensure_installed = {
+                    "java", "javascript", "typescript", "python", "go", "comment", "json",
+                    "jsdoc", "json", "markdown", "regex", "vim"
+                }, -- Ensure these are always installed
+                auto_install = true, -- Auto install when entering buffer
+                highlight = {
+                    enable = true, -- Enable tree sitter advanced highlighting
+                }
+            }
+        end
+    }
     -- 'gx' to go to the github links
     use {
         'https://github.com/glepnir/dashboard-nvim',
@@ -26,7 +42,8 @@ require('packer').startup(function(use)
         disable = true,
     } -- Advanced snippet program
     -- If want more in-depth changing of buffers/tabs line
-    -- TODO: Determine why bug on bufferline is switching when not fully commented out
+    -- TODO: Checkout to see if works bufferline equivalent: https://github.com/romgrk/barbar.nvim
+    -- TODO: Remove since not using
     use {
         'https://github.com/akinsho/bufferline.nvim',
         disable = true,
@@ -42,7 +59,7 @@ require('packer').startup(function(use)
             local logsitter = vim.api.nvim_create_augroup("LogSitter", { clear = true })
             vim.api.nvim_create_autocmd("FileType", {
                 group = logsitter,
-                pattern = "javascript,go,lua",
+                pattern = { "javascript", "typescript", "go", "lua" },
                 callback = function()
                     vim.keymap.set("n", "<leader>l", function()
                         require("logsitter").log()
@@ -56,11 +73,22 @@ require('packer').startup(function(use)
         'https://github.com/PeterRincker/vim-argumentative',
         ft = programming_languages,
     } -- For manipulating function arguments such as swapping position
-    use { 'https://github.com/nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+    use {
+        'https://github.com/lukas-reineke/indent-blankline.nvim',
+        config = function()
+            require("indent_blankline").setup {
+                show_current_context = true, -- Highlight the current outermost closure
+                show_current_context_start = true, -- Highlight the start of the current closure
+                use_treesitter = true,
+            }
+        end,
+        requires = {{ "https://github.com/nvim-treesitter/nvim-treesitter" }},
+    } -- For showing the vertical columns on tabs for easy tabbing info
     use 'https://github.com/wellle/targets.vim' -- Add new text objects such as din{ to find next instance of {} and to delete everything inside
     use {
         'https://github.com/michaeljsmith/vim-indent-object'
     }
+    -- TODO: checkout alternatives: https://github.com/ggandor/lightspeed.nvim, https://github.com/ggandor/leap.nvim
     -- TODO: check in with overloading leader key feature request: https://github.com/justinmk/vim-sneak/issues/298
     use {
         'https://github.com/justinmk/vim-sneak',
@@ -97,6 +125,7 @@ require('packer').startup(function(use)
     } -- Alt dashboard
     use 'https://github.com/honza/vim-snippets' -- General list of snippets
     use 'https://github.com/gruvbox-community/gruvbox' -- Updated gruvbox color scheme -- original: 'https://github.com/morhetz/gruvbox'
+    -- TODO: checkout lualine: https://github.com/nvim-lualine/lualine.nvim
     use {
         'https://github.com/vim-airline/vim-airline',
         config = function()
@@ -239,7 +268,6 @@ require('packer').startup(function(use)
             vim.opt.updatetime=300 -- update stuff only after 300 ms of no typing
         end,
     } -- Auto Completion
-
     use {
         'https://github.com/voldikss/vim-floaterm',
         config = function()
@@ -247,4 +275,7 @@ require('packer').startup(function(use)
             vim.g.floaterm_height = 0.9
         end
     } -- Floating terminal for reuse
+    -- TODO: checkout for git diffs: https://github.com/sindrets/diffview.nvim
+    -- TODO: checkout for note taking: https://github.com/nvim-orgmode/orgmode
+    -- TODO: total possible list: https://github.com/rockerBOO/awesome-neovim#note-taking
 end)
