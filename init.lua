@@ -107,7 +107,7 @@ map("n", "<leader>fgc", require'telescope.builtin'.git_commits, {silent=true})
 map("n", "<leader>fgb", require'telescope.builtin'.git_branches, {silent=true})
 
 -- Fugitive
-map("n", "<leader>gp", "<cmd>Git push<CR>")
+map("n", "<leader>gp", "<cmd>Git push<CR>", {silent=true})
 map("n", "<leader>gg", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gs", "<cmd>Git<CR>", {silent=true})
 map("n", "<leader>gc", "<cmd>Git commit<CR>", {silent=true})
