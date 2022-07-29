@@ -116,6 +116,8 @@ map("n", "<leader>gca", "<cmd>Git commit --amend<CR>", {silent=true})
 map("n", "<leader>gf", "<cmd>Git fetch --prune<CR>", {silent=true})
 map("n", "<leader>gr", ":Git reset --hard")
 map("n", "<leader>go", ":Git checkout<space>")
+map("n", "<leader>gwo", "<cmd>lua require('telescope').extensions.git_worktree.git_worktrees()<CR>") -- git-worktree
+map("n", "<leader>gwc", "<cmd>lua require('telescope').extensions.git_worktree.create_git_worktree()<CR>")
 map("n", "<leader>ga", ":Git add<space>")
 
 -- Projectionist
@@ -162,8 +164,13 @@ require("which-key").register({
         c = {
             name = "commit",
             a = "Git commit --amend",
-            c = "Git commit"
+            c = "Git commit",
         },
+        w = {
+            name = "worktrees",
+            o = "search worktrees",
+            c = "create worktree",
+        }
     },
     r = "rename",
     e = "explorer",
@@ -280,6 +287,9 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 augroup END
 ]])
 
+-- Cheat sheet
+map("n", "<leader>cc", "<cmd>Cheat<CR>")
+
 -- Coc markdown preview
 map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
@@ -291,9 +301,6 @@ map("n", "<leader>sd", "<cmd>SDelete<CR>")
 -- Dispatch
 map("n", "<leader>d", ":Dispatch<space>")
 map("n", "<leader>dd", "<cmd>Dispatch<CR>")
-
--- Autopairs
-map('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 -- DAP - Debugger
 map("n", "<leader>db", require('dap').toggle_breakpoint, {silent=true})

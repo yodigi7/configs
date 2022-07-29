@@ -101,6 +101,7 @@ require('packer').startup(function(use)
     } -- Sneak command to do f but with 2 chars and multiline
     use {
         'https://github.com/mhinz/vim-startify',
+        -- disable = true,
         config = function()
             vim.g.startify_bookmarks = {
                 -- {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
@@ -134,23 +135,6 @@ require('packer').startup(function(use)
         end
     } -- Status bar
     use 'https://github.com/ryanoasis/vim-devicons' -- Developer Icons
-    use {
-        'https://github.com/windwp/nvim-autopairs',
-        config = function()
-            local npairs = require("nvim-autopairs")
-            npairs.setup({
-                map_cr = false
-            })
-            _G.MUtils= {}
-            MUtils.completion_confirm=function()
-                if vim.fn.pumvisible() ~= 0  then
-                    return vim.fn["coc#_select_confirm"]()
-                else
-                    return npairs.autopairs_cr()
-                end
-            end
-        end
-    } -- Auto open and close pairs
     use 'https://github.com/folke/which-key.nvim' -- Show options for keybindings when in progress
     use {
         'https://github.com/lewis6991/gitsigns.nvim',
@@ -178,12 +162,18 @@ require('packer').startup(function(use)
         end
     } -- Vim wiki
     use 'https://github.com/tpope/vim-repeat' -- Allow plugins to work with dot command
-    use 'https://github.com/tpope/vim-surround' -- Surrounding ysw)
+    use {
+        'https://github.com/tpope/vim-surround',
+        disable = false,
+    } -- Surrounding ysw) TODO: remove if mini works
     use {
         'https://github.com/numToStr/Comment.nvim',
         disable = true,
     } -- TODO: checkout -- Alternative powerful commenter
-    use 'https://github.com/tpope/vim-commentary' -- For Commenting gcc & gc
+    use {
+        'https://github.com/tpope/vim-commentary',
+        disable = true,
+    }-- For Commenting gcc & gc TODO: remove if mini works
     use 'https://github.com/tpope/vim-fugitive' -- Git integration
     use {
         'https://github.com/tpope/vim-projectionist',
@@ -230,7 +220,7 @@ require('packer').startup(function(use)
     -- List of DAP adapters - use https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation
     use {
         'https://github.com/mfussenegger/nvim-dap-python',
-        -- ft = 'python',
+        ft = 'python',
     }
     use {
         'https://github.com/leoluz/nvim-dap-go',
@@ -242,7 +232,7 @@ require('packer').startup(function(use)
     }
     use {
         'https://github.com/theHamsta/nvim-dap-virtual-text',
-        -- ft = programming_languages,
+        ft = programming_languages,
     }
     use 'https://github.com/nvim-lua/plenary.nvim' -- General utils for a lot of plug-ins
 
@@ -263,8 +253,7 @@ require('packer').startup(function(use)
         'https://github.com/neoclide/coc.nvim',
         branch = 'release',
         config = function()
-            vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua' }
-
+            vim.g.coc_global_extensions = { 'coc-snippets', 'coc-explorer', 'coc-tsserver', 'coc-rome', 'coc-pyright', 'coc-json', 'coc-jedi', 'coc-java', 'coc-pydocstring', 'coc-go', 'coc-markdownlint', 'coc-markdown-preview-enhanced', 'coc-markmap', 'coc-lua', 'coc-pairs' }
             vim.opt.updatetime=300 -- update stuff only after 300 ms of no typing
         end,
     } -- Auto Completion
@@ -275,7 +264,29 @@ require('packer').startup(function(use)
             vim.g.floaterm_height = 0.9
         end
     } -- Floating terminal for reuse
+    use {
+        "https://github.com/ThePrimeagen/git-worktree.nvim",
+        requires = {{'https://github.com/nvim-telescope/telescope.nvim'}},
+        config = function()
+            require("telescope").load_extension("git_worktree")
+        end
+    }
+    use {
+        "https://github.com/RishabhRD/nvim-cheat.sh",
+        requires = {{'https://github.com/RishabhRD/popfix'}},
+        as = "nvim-cheat",
+    }
     -- TODO: checkout for git diffs: https://github.com/sindrets/diffview.nvim
     -- TODO: checkout for note taking: https://github.com/nvim-orgmode/orgmode
     -- TODO: total possible list: https://github.com/rockerBOO/awesome-neovim#note-taking
+    -- TODO: cheatsheat for developing https://github.com/RishabhRD/nvim-cheat.sh
+    use {
+        'https://github.com/echasnovski/mini.nvim',
+        branch = "stable",
+        config = function()
+            require("mini.comment").setup()
+            require("mini.sessions").setup()
+            require("mini.surround").setup()
+        end
+    }
 end)
