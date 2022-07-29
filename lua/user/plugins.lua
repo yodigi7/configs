@@ -19,10 +19,6 @@ require('packer').startup(function(use)
         end
     }
     -- 'gx' to go to the github links
-    use {
-        'https://github.com/glepnir/dashboard-nvim',
-        disable = true,
-    } -- Dashboard -- TODO: Missing multiple sessions easy open
     -- TODO: Check out below
     -- use 'https://github.com/folke/trouble.nvim' -- Showing pretty list for diagnotics, references, quickfix, locationlists, etc.
     -- use 'https://github.com/arafatamim/trouble.nvim' -- Fork of above to work with coc
@@ -33,21 +29,9 @@ require('packer').startup(function(use)
             vim.g.qs_filetype_blacklist = { 'startify', 'TelescopePrompt', 'TelescopeResults' }
         end
     } -- Highlight optimal thing to search
-    use {
-        'https://github.com/ervandew/supertab', -- Overload tab to cycle through autocomplete
-        disable = true,
-    }
-    use {
-        'https://github.com/L3MON4D3/LuaSnip',
-        disable = true,
-    } -- Advanced snippet program
     -- If want more in-depth changing of buffers/tabs line
     -- TODO: Checkout to see if works bufferline equivalent: https://github.com/romgrk/barbar.nvim
     -- TODO: Remove since not using
-    use {
-        'https://github.com/akinsho/bufferline.nvim',
-        disable = true,
-    } -- Shows buffers as tabs in line like VSCode
     use {
         'https://github.com/NMAC427/guess-indent.nvim',
         config = function() require('guess-indent').setup{} end,
@@ -101,7 +85,7 @@ require('packer').startup(function(use)
     } -- Sneak command to do f but with 2 chars and multiline
     use {
         'https://github.com/mhinz/vim-startify',
-        -- disable = true,
+        disable = true,
         config = function()
             vim.g.startify_bookmarks = {
                 -- {w = '/mnt/c/Users/anthony.buchholz/My Documents/Hyundai/ai_smartchat_webhook'},
@@ -166,14 +150,6 @@ require('packer').startup(function(use)
         'https://github.com/tpope/vim-surround',
         disable = false,
     } -- Surrounding ysw) TODO: remove if mini works
-    use {
-        'https://github.com/numToStr/Comment.nvim',
-        disable = true,
-    } -- TODO: checkout -- Alternative powerful commenter
-    use {
-        'https://github.com/tpope/vim-commentary',
-        disable = true,
-    }-- For Commenting gcc & gc TODO: remove if mini works
     use 'https://github.com/tpope/vim-fugitive' -- Git integration
     use {
         'https://github.com/tpope/vim-projectionist',
@@ -184,17 +160,18 @@ require('packer').startup(function(use)
         cmd = {'Dispatch', 'Make'},
         config = function()
             local dispatch_map = {
-                java = "mvn test",
-                python = "pytest",
-                javascript = "npm test",
+                java = {test = "mvn clean test", build = "mvn clean install"},
+                python = {test = "pytest"},
+                javascript = {test = "npm test", run = "npm start"},
             }
             local dispatch_group = vim.api.nvim_create_augroup("DispatchGroup", {clear=true})
-            for language, command in pairs(dispatch_map) do
+            for language, commands in pairs(dispatch_map) do
                 vim.api.nvim_create_autocmd("FileType", {
                     pattern = {language},
                     group = dispatch_group,
                     callback = function ()
-                        vim.b.dispatch = command
+                        vim.b.dispatch_commands = commands
+                        vim.b.dispatch = commands["test"] -- default to use test command
                     end
                 })
             end
@@ -286,6 +263,17 @@ require('packer').startup(function(use)
         config = function()
             require("mini.comment").setup()
             require("mini.sessions").setup()
+            local starter = require("mini.starter")
+            starter.setup({
+                items = {
+                    starter.sections.sessions(10, true),
+                    { name = "Standup", action = ":e ~/vimwiki/work/Standup.md", section = "Bookmarks" },
+                    { name = "Passwords", action = ":e ~/vimwiki/work/Passwords.md", section = "Bookmarks" },
+                    { name = "VimWiki", action = ":Explore ~/vimwiki/", section = "Bookmarks" },
+                    starter.sections.telescope(),
+                    starter.sections.builtin_actions(),
+                }
+            })
             require("mini.surround").setup()
         end
     }

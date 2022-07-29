@@ -41,23 +41,3 @@ for _, event in pairs(file_update_events) do
         end
     })
 end
-
-local gitcommit_group = vim.api.nvim_create_augroup("GitCommitGroup", {clear=true})
-vim.api.nvim_create_autocmd({"FileType"}, {
-    pattern = { "gitcommit" },
-    group = gitcommit_group,
-    command = "startinsert"
-})
--- local js_file_group = vim.api.nvim_create_augroup("JsFileGroup", {clear=true})
--- vim.api.nvim_create_autocmd({"FileType"}, {
---     pattern = { "javascript", "typescript" },
---     group = js_file_group,
---     callback = function ()
---         vim.schedule(function ()
---             vim.bo.tabstop = 2
---             vim.bo.softtabstop = 2
---             vim.bo.shiftwidth = 2
---             print("Loaded custom tab settings for buffer")
---         end)
---     end
--- })

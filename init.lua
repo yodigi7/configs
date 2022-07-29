@@ -182,6 +182,7 @@ require("which-key").register({
     d = {
         d = "Run Dispatch",
         b = "Toggle debug point",
+        [" "] = "Run Custom Dispatch",
     },
     w = {
         name = "write file",
@@ -293,14 +294,34 @@ map("n", "<leader>cc", "<cmd>Cheat<CR>")
 -- Coc markdown preview
 map("n", "<leader>m", "<cmd>CocCommand markdown-preview-enhanced.openPreview<CR>")
 
--- Startify
-map("n", "<leader>ss", "<cmd>SSave<CR>")
-map("n", "<leader>sc", "<cmd>SClose<CR>")
-map("n", "<leader>sd", "<cmd>SDelete<CR>")
+-- mini.sessions
+SaveSession = function()
+    if not pcall(require('mini.sessions').write) then
+        vim.ui.input({ prompt = "Enter name of new session: "}, function (name)
+                if name ~= nil and name ~= '' then
+                    require('mini.sessions').write(name)
+                else
+                    print('INVALID: empty session name')
+                end
+            end)
+    end
+end
+map("n", "<leader>ss", SaveSession)
+map("n", "<leader>so", "<cmd>lua SaveSession()<CR><cmd>lua MiniSessions.select()<CR>")
+map("n", "<leader>sc", "<cmd>lua SaveSession()<CR><cmd>lua MiniStarter.open()<CR>")
+map("n", "<leader>sd", ":lua require('mini.sessions').delete(, {force=true})<left><left><left><left><left><left><left><left><left><left><left><left><left><left><left>")
 
 -- Dispatch
-map("n", "<leader>d", ":Dispatch<space>")
-map("n", "<leader>dd", "<cmd>Dispatch<CR>")
+local run_dispatch_with_goal = function (goal)
+    return function ()
+        vim.b.dispatch = vim.b.dispatch_commands[goal]
+        vim.cmd("Dispatch")
+    end
+end
+map("n", "<leader>d<space>", ":Dispatch<space>")
+map("n", "<leader>dr", run_dispatch_with_goal("run"))
+map("n", "<leader>dt", run_dispatch_with_goal("test"))
+map("n", "<leader>dd", run_dispatch_with_goal("test"))
 
 -- DAP - Debugger
 map("n", "<leader>db", require('dap').toggle_breakpoint, {silent=true})
